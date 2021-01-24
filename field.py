@@ -18,9 +18,17 @@ class Field:
         self.cell = [[Cell() for _ in range(size[1])] for _ in range(size[0])]
         # размеры
         self.plates_size = (32, 32)       
-        # [0] - пустота, [1] - земля      
-        self.plates_image = [pygame.transform.scale(pygame.image.load("source/textures/void.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
-                            pygame.transform.scale(pygame.image.load("source/textures/ground.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))]
+        # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж окружений   
+        self.plates_image = [
+            [
+                pygame.transform.scale(pygame.image.load("source/textures/void.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
+            ], 
+            [
+                pygame.transform.scale(pygame.image.load("source/textures/forest.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+                pygame.transform.scale(pygame.image.load("source/textures/mountain.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+                pygame.transform.scale(pygame.image.load("source/textures/steppe.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+            ]
+        ]
     
     def generateMap(self, 
         seed=None, 
@@ -146,21 +154,26 @@ class Field:
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
                 sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1]))
-                
+
                 # пустые клетки
                 if self.cell[x][y].type == Type().void:
-                    sprite.image = self.plates_image[0]
+                    sprite.image = self.plates_image[0][0]
                     group.add(sprite)
                 
                 # земля
                 if self.cell[x][y].type == Type().ground:
-                    sprite.image = self.plates_image[1]
+                    sprite.image = self.plates_image[1][self.cell[x][y].subType]
                     group.add(sprite)
-
-                '''
-                сделать отдельные текстуры под землю и воду
-                '''
         
         group.draw(screen)
 
-
+    def event(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    x = event.pos[0] // self.plates_size[0]
+                    y = event.pos[1] // self.plates_size[1]
+                    self.cell[x][y].subType = (self.cell[x][y].subType + 1) % 3
+                    print(x, y)

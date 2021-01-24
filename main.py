@@ -11,7 +11,8 @@ if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((800, 800))
 
-    while pygame.event.wait().type != pygame.QUIT:
+    while True:
+        field.event()
         field.render(screen)
         pygame.display.flip()
     pygame.quit()

@@ -1,17 +1,20 @@
 class Type:
     def __init__(self):
-        self.void        ='00001'
-        self.ground      ='00010'
-        self.unit        ='00100'
-        self.building    ='01000'
-        self.environment ='10000'
+        self.void        ='0'
+        self.ground      ='1'
+        self.unit        ='2'
+        self.building    ='3'
+        self.environment ='4'
 
 
 class Cell:
-    def __init__(self, type=None, color=None):
-        if type == None: self.type = Type().void
-        else: self.type = type
+    def __init__(self, Type=None, color=None, subType=None):
+        if Type == None: self.type = '0'
+        else: self.type = Type
 
         if color == None: self.color = (128, 128, 128)
         else: self.color = color
+
+        if subType == None: self.subType = 0
+        else: self.subType = subType
         
