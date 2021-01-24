@@ -16,8 +16,11 @@ class Field:
 
         # поле
         self.cell = [[Cell() for _ in range(size[1])] for _ in range(size[0])]
-        self.plates_size = (32, 32)             # размеры
-        self.plates_image = pygame.transform.scale(pygame.image.load("source/textures/plate.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
+        # размеры
+        self.plates_size = (32, 32)       
+        # [0] - пустота, [1] - земля      
+        self.plates_image = [pygame.transform.scale(pygame.image.load("source/textures/void.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+                            pygame.transform.scale(pygame.image.load("source/textures/ground.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))]
     
     def generateMap(self, 
         seed=None, 
@@ -141,19 +144,17 @@ class Field:
         # отрисовка клеток поля
         for y in range(self.size[1]):
             for x in range(self.size[0]):
+                sprite = pygame.sprite.Sprite()
+                sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1]))
+                
                 # пустые клетки
                 if self.cell[x][y].type == Type().void:
-                    pygame.draw.rect(screen, self.cell[x][y].color, (
-                        int(x * self.plates_size[0]), 
-                        int(y * self.plates_size[1]), 
-                        self.plates_size[0],
-                        self.plates_size[1]))
+                    sprite.image = self.plates_image[0]
+                    group.add(sprite)
                 
                 # земля
                 if self.cell[x][y].type == Type().ground:
-                    sprite = pygame.sprite.Sprite()
-                    sprite.image = self.plates_image
-                    sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1]))
+                    sprite.image = self.plates_image[1]
                     group.add(sprite)
 
                 '''
