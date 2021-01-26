@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw 
 from cell import Type, Cell
+from unit import Unit
 
 import math
 import random
@@ -14,12 +15,15 @@ class Field:
         self.size = size                        # размеры поля в (КЛЕТКИ по х, КЛЕТКИ по у)
         self.playerCount = playerCount          # количество игроков
 
-        # поле
+        # клетки поля
         self.cell = [[Cell() for _ in range(size[1])] for _ in range(size[0])]
+        # юниты
+        self.unit = [[Unit() for _ in range(size[1])] for _ in range(size[0])]
+
         # размеры
         self.plates_size = (32, 32)       
         # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж окружений   
-        self.plates_image = [
+        self.image = [
             [
                 pygame.transform.scale(pygame.image.load("source/textures/void.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
             ], 
@@ -27,6 +31,9 @@ class Field:
                 pygame.transform.scale(pygame.image.load("source/textures/steppe.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
                 pygame.transform.scale(pygame.image.load("source/textures/forest.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
                 pygame.transform.scale(pygame.image.load("source/textures/mountain.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+            ],
+            [
+                 pygame.transform.scale(pygame.image.load("source/textures/worker.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
             ]
         ]
     
@@ -65,15 +72,15 @@ class Field:
         random.seed = self.seed
 
         # количество опорных точек пиков
-        if peakCount == None: self.peakCount = random.randint(2, 5)
+        if peakCount == None: self.peakCount = random.randint(2, 7)
         else: self.peakCount = peakCount
 
         # диапазон радиусов опорных точек пиков
-        if peakRadius == None: self.peakRadius = (300, 600)
+        if peakRadius == None: self.peakRadius = (200, 700)
         else: self.peakRadius = peakRadius
 
         # диапазон колебаний длин направлений пиков
-        if peakVerticesRange == None: self.peakVerticesRange = (-300, +400)
+        if peakVerticesRange == None: self.peakVerticesRange = (-400, +500)
         else: self.peakVerticesRange = peakVerticesRange
 
         # количество направлений пиков
@@ -85,11 +92,11 @@ class Field:
         else: self.holeCount = holeCount
 
         # диапазон радиусов опорных точек дырок
-        if holeRadius == None: self.holeRadius = (50, 200)
+        if holeRadius == None: self.holeRadius = (10, 300)
         else: self.holeRadius = holeRadius
 
         # диапазон колебаний длин направлений дырок
-        if holeVerticesRange == None: self.holeVerticesRange = (-300, +400)
+        if holeVerticesRange == None: self.holeVerticesRange = (-400, +500)
         else: self.holeVerticesRange = holeVerticesRange
 
         # количество направлений дырок
@@ -101,11 +108,11 @@ class Field:
         else: self.steppePercentage = steppePercentage
 
         # концентрация лесов
-        if forestPercentage == None: self.forestPercentage = 0.06
+        if forestPercentage == None: self.forestPercentage = 0.2
         else: self.forestPercentage = forestPercentage
         
         # концентрация гор
-        if mountainPercentage == None: self.mountainPercentage = 0.06
+        if mountainPercentage == None: self.mountainPercentage = 0.2
         else: self.mountainPercentage = mountainPercentage
 
         # первым делом создается изображение
@@ -144,9 +151,9 @@ class Field:
 
             # выбор типа заполнения дырки
             a = (random.randint(0, 100) / 100)
-            if a <= self.mountainPercentage: clr = (0, 0, 0)
-            elif a - self.mountainPercentage <= self.forestPercentage: clr = (50, 50, 50)
-            elif a - self.mountainPercentage - self.forestPercentage <= self.steppePercentage: clr = (100, 100, 100)
+            if a <= self.steppePercentage: clr = (0, 0, 0)
+            elif a - self.steppePercentage <= self.forestPercentage: clr = (50, 50, 50)
+            elif a - self.steppePercentage - self.forestPercentage <= self.mountainPercentage: clr = (100, 100, 100)
             else:   clr = (150, 150, 150)
 
             
@@ -174,8 +181,8 @@ class Field:
                     for _y in range(y, min(y + int(image.size[1] / self.size[1]), image.size[0])):
                         pixel[_x, _y] = clr
                 
-                if clr == (50, 50, 50): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 0)
-                elif clr == (100, 100, 100): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 1)
+                if clr == (50, 50, 50): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 1)
+                elif clr == (100, 100, 100): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 0)
                 elif clr == (150, 150, 150): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 2)
                 elif clr == (255, 255, 255): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().void)
 
@@ -192,13 +199,19 @@ class Field:
 
                 # пустые клетки
                 if self.cell[x][y].type == Type().void:
-                    sprite.image = self.plates_image[0][0]
+                    sprite.image = self.image[0][0]
                     group.add(sprite)
                 
                 # земля
                 if self.cell[x][y].type == Type().ground:
-                    sprite.image = self.plates_image[1][self.cell[x][y].subType]
+                    sprite.image = self.image[1][self.cell[x][y].subType]
                     group.add(sprite)
+
+                # юниты
+                if self.unit[x][y].type == Type().worker:
+                    sprite.image = self.image[2][self.unit[x][y].subType]
+                    group.add(sprite)
+                
         
         group.draw(screen)
 
@@ -210,5 +223,5 @@ class Field:
                 if event.button == 1:
                     x = event.pos[0] // self.plates_size[0]
                     y = event.pos[1] // self.plates_size[1]
-                    self.cell[x][y].subType = (self.cell[x][y].subType + 1) % 3
+                    self.unit[x][y].type = Type().worker
                     print(x, y)

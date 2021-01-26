@@ -3,14 +3,12 @@ import pygame
 
 
 class Unit:
-    def __init__(self, pos=None, subId=None):
-        # координаты клетки юнита
-        if pos == None: self.position = (0, 0)
-        else: self.position = pos
+    def __init__(self, Type=None, subType=None):
+        if Type == None: self.type = 0
+        else: self.type = Type
 
-        # тип юнита
-        if subId == None: self.subId = 0
-        else: self.subId = subId
+        if subType == None: self.subType = 0
+        else: self.subType = subType
 
 '''
 {имя} - уровней {количество} : {здоровье, урон} : {доп свойства}
