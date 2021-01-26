@@ -24,9 +24,9 @@ class Field:
                 pygame.transform.scale(pygame.image.load("source/textures/void.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
             ], 
             [
+                pygame.transform.scale(pygame.image.load("source/textures/steppe.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
                 pygame.transform.scale(pygame.image.load("source/textures/forest.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
                 pygame.transform.scale(pygame.image.load("source/textures/mountain.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
-                pygame.transform.scale(pygame.image.load("source/textures/steppe.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
             ]
         ]
     
@@ -39,7 +39,10 @@ class Field:
         holeCount=None, 
         holeRadius=None, 
         holeVerticesRange=None, 
-        holeVerticesCount=None
+        holeVerticesCount=None,
+        steppePercentage=None,
+        forestPercentage=None,
+        mountainPercentage=None
         ):
         '''
         seed: int - сид генерации\n
@@ -51,6 +54,9 @@ class Field:
         holeRadius: (int, int) - диапазон радиусов опорных точек дырок\n
         holeVerticesRange: (int, int) - диапазон колебаний длин направлений дырок\n
         holeVerticesCount: (int, int) - количество направлений дырок\n
+        steppePercentage: float - концентрация степей
+        forestPercentage: float - концентрация лесов\n
+        mountainPercentage: float - концентрация гор\n
         '''
 
         # сид генерации
@@ -90,6 +96,18 @@ class Field:
         if holeVerticesCount == None: self.holeVerticesCount = random.randint(3, 12)
         else: self.holeVerticesCount = random.randint(holeVerticesCount[0], holeVerticesCount[1])
 
+        # концентрация степей
+        if steppePercentage == None: self.steppePercentage = 0.4
+        else: self.steppePercentage = steppePercentage
+
+        # концентрация лесов
+        if forestPercentage == None: self.forestPercentage = 0.06
+        else: self.forestPercentage = forestPercentage
+        
+        # концентрация гор
+        if mountainPercentage == None: self.mountainPercentage = 0.06
+        else: self.mountainPercentage = mountainPercentage
+
         # первым делом создается изображение
         image = Image.new("RGBA", (2000, 2000), (255, 255, 255))
         pattern = ImageDraw.Draw(image)
@@ -123,9 +141,19 @@ class Field:
                 x = center[0] + math.cos(angle * math.pi / 180) * len_l
                 y = center[1] + math.sin(angle * math.pi / 180) * len_l
                 coord.append((x, y))
-            pattern.polygon(coord, fill=(255, 255, 255))
+
+            # выбор типа заполнения дырки
+            a = (random.randint(0, 100) / 100)
+            if a <= self.mountainPercentage: clr = (0, 0, 0)
+            elif a - self.mountainPercentage <= self.forestPercentage: clr = (50, 50, 50)
+            elif a - self.mountainPercentage - self.forestPercentage <= self.steppePercentage: clr = (100, 100, 100)
+            else:   clr = (150, 150, 150)
+
+            
+            pattern.polygon(coord, fill=clr)
 
         image.save("source/pattern/pattern_step_1.png")
+
         # делим изображение сеткой, и закрашиваем в черный
         for x in range(0, image.size[0], int(image.size[0] / self.size[0])):
             for y in range(0, image.size[1], int(image.size[1] / self.size[1])):
@@ -133,16 +161,23 @@ class Field:
                 for _x in range(x, min(x + int(image.size[0] / self.size[0]), image.size[0])):
                     for _y in range(y, min(y + int(image.size[1] / self.size[1]), image.size[1])):
                         clr += (pixel[_x, _y])[0]
-                clr = int(clr / (int(image.size[0] / self.size[0]) * int(image.size[1] / self.size[1])))
-                clr = (0, 0, 0) if clr < 255 / 2 else (255, 255, 255)
+
+                pxlCount = (min(x + int(image.size[0] / self.size[0]), image.size[0]) - x) * (min(y + int(image.size[1] / self.size[1]), image.size[1]) - y)
+                clr /= pxlCount
+
+                if clr <= 50: clr = (50, 50, 50)
+                elif clr <= 100: clr = (100, 100, 100)
+                elif clr <= 150: clr = (150, 150, 150)
+                else: clr = (255, 255, 255)
+
                 for _x in range(x, min(x + int(image.size[0] / self.size[0]), image.size[0])):
                     for _y in range(y, min(y + int(image.size[1] / self.size[1]), image.size[0])):
                         pixel[_x, _y] = clr
                 
-                if clr == (0, 0, 0):
-                    self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground)
-                elif clr == (255, 255, 255):
-                    self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().void, clr)
+                if clr == (50, 50, 50): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 0)
+                elif clr == (100, 100, 100): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 1)
+                elif clr == (150, 150, 150): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 2)
+                elif clr == (255, 255, 255): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().void)
 
         image.save("source/pattern/pattern_step_2.png")
 
