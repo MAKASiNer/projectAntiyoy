@@ -5,11 +5,11 @@ import pygame
 
 
 if __name__ == '__main__':
-    field = Field((25, 25), 1)
+    field = Field((40, 40), 1, (1300, 1000))
     field.generateMap()
 
     pygame.init()
-    screen = pygame.display.set_mode((800, 800))
+    screen = pygame.display.set_mode(field.winSize)
 
     while True:
         field.event()

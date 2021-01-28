@@ -10,10 +10,13 @@ import datetime
 
 
 class Field:
-    def __init__(self, size, playerCount):
+    def __init__(self, size, playerCount, winSize):
         # игра
         self.size = size                        # размеры поля в (КЛЕТКИ по х, КЛЕТКИ по у)
         self.playerCount = playerCount          # количество игроков
+        self.mousePos = (-1, -1)                # координаты мышки в клетках
+        self.selectedPos = (-1, -1)             # выбранная позиция
+        self.winSize = winSize                  # размеры окна
 
         # клетки поля
         self.cell = [[Cell() for _ in range(size[1])] for _ in range(size[0])]
@@ -21,21 +24,24 @@ class Field:
         self.unit = [[Unit() for _ in range(size[1])] for _ in range(size[0])]
 
         # размеры
-        self.plates_size = (32, 32)       
+        self.plates_size = (25, 25)       
         # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж окружений   
         self.image = [
             [
-                pygame.transform.scale(pygame.image.load("source/textures/void.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
+                pygame.transform.scale(pygame.image.load("source/textures/void.png"), (self.plates_size[0], self.plates_size[1]))
             ], 
             [
-                pygame.transform.scale(pygame.image.load("source/textures/steppe.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
-                pygame.transform.scale(pygame.image.load("source/textures/forest.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
-                pygame.transform.scale(pygame.image.load("source/textures/mountain.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+                pygame.transform.scale(pygame.image.load("source/textures/steppe.png"), (self.plates_size[0], self.plates_size[1])),
+                pygame.transform.scale(pygame.image.load("source/textures/forest.png"), (self.plates_size[0], self.plates_size[1])),
+                pygame.transform.scale(pygame.image.load("source/textures/mountain.png"), (self.plates_size[0], self.plates_size[1])),
             ],
             [
-                 pygame.transform.scale(pygame.image.load("source/textures/worker.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+                 pygame.transform.scale(pygame.image.load("source/textures/worker.png"), (self.plates_size[0], self.plates_size[1])),
             ]
         ]
+
+        # интерфейс
+        self.lefBg = pygame.transform.scale(pygame.image.load("source/interface/left_bg.png"), (300, 1000))
     
     def generateMap(self, 
         seed=None, 
@@ -88,15 +94,15 @@ class Field:
         else: self.peakVerticesCount = random.randint(peakVerticesCount[0], peakVerticesCount[1])
 
         # количество опорных точек дырок
-        if holeCount == None: self.holeCount = random.randint(0, 15)
+        if holeCount == None: self.holeCount = random.randint(5, 30)
         else: self.holeCount = holeCount
 
         # диапазон радиусов опорных точек дырок
-        if holeRadius == None: self.holeRadius = (10, 300)
+        if holeRadius == None: self.holeRadius = (50, 500)
         else: self.holeRadius = holeRadius
 
         # диапазон колебаний длин направлений дырок
-        if holeVerticesRange == None: self.holeVerticesRange = (-400, +500)
+        if holeVerticesRange == None: self.holeVerticesRange = (-50, +500)
         else: self.holeVerticesRange = holeVerticesRange
 
         # количество направлений дырок
@@ -104,15 +110,15 @@ class Field:
         else: self.holeVerticesCount = random.randint(holeVerticesCount[0], holeVerticesCount[1])
 
         # концентрация степей
-        if steppePercentage == None: self.steppePercentage = 0.4
+        if steppePercentage == None: self.steppePercentage = 0.3
         else: self.steppePercentage = steppePercentage
 
         # концентрация лесов
-        if forestPercentage == None: self.forestPercentage = 0.2
+        if forestPercentage == None: self.forestPercentage = 0.1
         else: self.forestPercentage = forestPercentage
         
         # концентрация гор
-        if mountainPercentage == None: self.mountainPercentage = 0.2
+        if mountainPercentage == None: self.mountainPercentage = 0.3
         else: self.mountainPercentage = mountainPercentage
 
         # первым делом создается изображение
@@ -154,7 +160,7 @@ class Field:
             if a <= self.steppePercentage: clr = (0, 0, 0)
             elif a - self.steppePercentage <= self.forestPercentage: clr = (50, 50, 50)
             elif a - self.steppePercentage - self.forestPercentage <= self.mountainPercentage: clr = (100, 100, 100)
-            else:   clr = (150, 150, 150)
+            else:   clr = (255, 255, 255)
 
             
             pattern.polygon(coord, fill=clr)
@@ -182,14 +188,31 @@ class Field:
                         pixel[_x, _y] = clr
                 
                 if clr == (50, 50, 50): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 1)
-                elif clr == (100, 100, 100): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 0)
-                elif clr == (150, 150, 150): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 2)
+                elif clr == (100, 100, 100): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 2)
+                elif clr == (150, 150, 150): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 0)
                 elif clr == (255, 255, 255): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().void)
 
         image.save("source/pattern/pattern_step_2.png")
 
     def render(self, screen):
         group = pygame.sprite.Group()
+
+        # интерфейс
+        sprite = pygame.sprite.Sprite()
+        sprite.rect = (self.winSize[0] - (self.size[0] * self.plates_size[0]), self.winSize[1] - (self.size[1] * self.plates_size[1]))
+        sprite.rect = (self.size[0] * self.plates_size[0], 0)
+        sprite.image = self.lefBg
+        group.add(sprite)
+
+        ''' if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
+            text = "sell Pos:{}\n\tsell Id:{}\t| sell subId:{}\n\tunit Id:{}\t| unit subId:{}".format(
+                self.selectedPos, 
+                self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
+                self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
+                self.unit[self.selectedPos[0]][self.selectedPos[1]].type,
+                self.unit[self.selectedPos[0]][self.selectedPos[1]].subType)
+            print(text) '''
+
 
         # отрисовка клеток поля
         for y in range(self.size[1]):
@@ -212,16 +235,40 @@ class Field:
                     sprite.image = self.image[2][self.unit[x][y].subType]
                     group.add(sprite)
                 
-        
         group.draw(screen)
 
     def event(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+
+            if event.type == pygame.MOUSEMOTION:
+                x = event.pos[0] // self.plates_size[0]
+                y = event.pos[1] // self.plates_size[1]
+                self.mousePos = (x, y)
+
             if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    x = event.pos[0] // self.plates_size[0]
-                    y = event.pos[1] // self.plates_size[1]
+                if event.button == 3:
+                    x = min(self.mousePos[0], self.size[0] - 1)
+                    y = min(self.mousePos[1], self.size[1] - 1)
+                    self.selectedPos = (x, y)
+
+                    text = "sell Pos:{}\n\tsell Id:{}\t| sell subId:{}\n\tunit Id:{}\t| unit subId:{}".format(
+                        self.selectedPos, 
+                        self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
+                        self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].type,
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].subType)
+                    print(text)
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_0:
+                    x = min(self.mousePos[0], self.size[0] - 1)
+                    y = min(self.mousePos[1], self.size[1] - 1)
                     self.unit[x][y].type = Type().worker
-                    print(x, y)
+                
+                if event.key == pygame.K_m:
+                    if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
+                        if self.unit[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
+                            self.unit[self.mousePos[0]][self.mousePos[1]] = self.unit[self.selectedPos[0]][self.selectedPos[1]]
+                            self.unit[self.selectedPos[0]][self.selectedPos[1]] = Unit()
