@@ -5,9 +5,16 @@ class Type:
         self.unit        =2
         self.building    =3
         self.environment =4
+        self.select      =5
 
         self.worker      =1
-
+        self.saber       =2
+        self.assassin    =3
+        self.berserker   =4
+        self.archer      =5
+        self.caster      =6
+        self.rider       =7
+        self.lancer      =8
 
 
 class Cell:
@@ -20,3 +27,5 @@ class Cell:
 
         if color == None: self.color = (128, 128, 128)
         else: self.color = color
+
+        self.isSelected = False

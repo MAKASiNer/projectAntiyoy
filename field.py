@@ -28,19 +28,29 @@ class Field:
         # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж окружений   
         self.image = [
             [
-                pygame.transform.scale(pygame.image.load("source/textures/void.png"), (self.plates_size[0], self.plates_size[1]))
+                pygame.transform.scale(pygame.image.load("source/texture/void.png"), self.plates_size)
             ], 
             [
-                pygame.transform.scale(pygame.image.load("source/textures/steppe.png"), (self.plates_size[0], self.plates_size[1])),
-                pygame.transform.scale(pygame.image.load("source/textures/forest.png"), (self.plates_size[0], self.plates_size[1])),
-                pygame.transform.scale(pygame.image.load("source/textures/mountain.png"), (self.plates_size[0], self.plates_size[1])),
+                pygame.transform.scale(pygame.image.load("source/texture/steppe.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/forest.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/mountain.png"), self.plates_size),
             ],
             [
-                 pygame.transform.scale(pygame.image.load("source/textures/worker.png"), (self.plates_size[0], self.plates_size[1])),
+                pygame.transform.scale(pygame.image.load("source/texture/worker.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/saber.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/assassin.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/berserker.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/archer.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/caster.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/rider.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/lancer.png"), self.plates_size)
             ]
         ]
 
         # интерфейс
+        self.select = pygame.transform.scale(pygame.image.load("source/interface/select.png"), self.plates_size)
+        self.occupiedCell = pygame.transform.scale(pygame.image.load("source/interface/occupiedCell.png"), self.plates_size)
+        self.freeCell = pygame.transform.scale(pygame.image.load("source/interface/freeCell.png"), self.plates_size)
         self.lefBg = pygame.transform.scale(pygame.image.load("source/interface/left_bg.png"), (300, 1000))
     
     def generateMap(self, 
@@ -82,43 +92,43 @@ class Field:
         else: self.peakCount = peakCount
 
         # диапазон радиусов опорных точек пиков
-        if peakRadius == None: self.peakRadius = (200, 700)
+        if peakRadius == None: self.peakRadius = (100, 500)
         else: self.peakRadius = peakRadius
 
         # диапазон колебаний длин направлений пиков
-        if peakVerticesRange == None: self.peakVerticesRange = (-400, +500)
+        if peakVerticesRange == None: self.peakVerticesRange = (-100, +500)
         else: self.peakVerticesRange = peakVerticesRange
 
         # количество направлений пиков
-        if peakVerticesCount == None: self.peakVerticesCount = random.randint(3, 12)
+        if peakVerticesCount == None: self.peakVerticesCount = random.randint(3, 10)
         else: self.peakVerticesCount = random.randint(peakVerticesCount[0], peakVerticesCount[1])
 
         # количество опорных точек дырок
-        if holeCount == None: self.holeCount = random.randint(5, 30)
+        if holeCount == None: self.holeCount = random.randint(0, 30)
         else: self.holeCount = holeCount
 
         # диапазон радиусов опорных точек дырок
-        if holeRadius == None: self.holeRadius = (50, 500)
+        if holeRadius == None: self.holeRadius = (-100, 500)
         else: self.holeRadius = holeRadius
 
         # диапазон колебаний длин направлений дырок
-        if holeVerticesRange == None: self.holeVerticesRange = (-50, +500)
+        if holeVerticesRange == None: self.holeVerticesRange = (-50, +300)
         else: self.holeVerticesRange = holeVerticesRange
 
         # количество направлений дырок
-        if holeVerticesCount == None: self.holeVerticesCount = random.randint(3, 12)
+        if holeVerticesCount == None: self.holeVerticesCount = random.randint(3, 15)
         else: self.holeVerticesCount = random.randint(holeVerticesCount[0], holeVerticesCount[1])
 
         # концентрация степей
-        if steppePercentage == None: self.steppePercentage = 0.3
+        if steppePercentage == None: self.steppePercentage = 0.8
         else: self.steppePercentage = steppePercentage
 
         # концентрация лесов
-        if forestPercentage == None: self.forestPercentage = 0.1
+        if forestPercentage == None: self.forestPercentage = 0.2
         else: self.forestPercentage = forestPercentage
         
         # концентрация гор
-        if mountainPercentage == None: self.mountainPercentage = 0.3
+        if mountainPercentage == None: self.mountainPercentage = 0.9
         else: self.mountainPercentage = mountainPercentage
 
         # первым делом создается изображение
@@ -156,27 +166,33 @@ class Field:
                 coord.append((x, y))
 
             # выбор типа заполнения дырки
-            a = (random.randint(0, 100) / 100)
-            if a <= self.steppePercentage: clr = (0, 0, 0)
-            elif a - self.steppePercentage <= self.forestPercentage: clr = (50, 50, 50)
-            elif a - self.steppePercentage - self.forestPercentage <= self.mountainPercentage: clr = (100, 100, 100)
-            else:   clr = (255, 255, 255)
+            a = (float(random.randint(0, 100)) / 100)
+            b = (float(random.randint(0, 100)) / 100)
+            c = (float(random.randint(0, 100)) / 100)
+
+            if a < self.forestPercentage: clr = (50, 50, 50)
+            elif b < self.steppePercentage: clr = (100, 100, 100)
+            elif c < self.mountainPercentage: clr = (150, 150, 150)
+            else: clr = (255, 255, 255)
 
             
             pattern.polygon(coord, fill=clr)
 
         image.save("source/pattern/pattern_step_1.png")
 
-        # делим изображение сеткой, и закрашиваем в черный
+        # делим изображение сеткой, и закрашиваем
         for x in range(0, image.size[0], int(image.size[0] / self.size[0])):
             for y in range(0, image.size[1], int(image.size[1] / self.size[1])):
                 clr = 0
+                whitePxl = False
                 for _x in range(x, min(x + int(image.size[0] / self.size[0]), image.size[0])):
                     for _y in range(y, min(y + int(image.size[1] / self.size[1]), image.size[1])):
+                        if not whitePxl and (pixel[_x, _y])[0] == 255: whitePxl = True
                         clr += (pixel[_x, _y])[0]
-
+                
                 pxlCount = (min(x + int(image.size[0] / self.size[0]), image.size[0]) - x) * (min(y + int(image.size[1] / self.size[1]), image.size[1]) - y)
-                clr /= pxlCount
+                if whitePxl: clr = 255
+                else: clr /= pxlCount
 
                 if clr <= 50: clr = (50, 50, 50)
                 elif clr <= 100: clr = (100, 100, 100)
@@ -204,6 +220,18 @@ class Field:
         sprite.image = self.lefBg
         group.add(sprite)
 
+        '''# отрисовка селекта поля
+        if 0 <= self.selectedPos[0] < self.size[0] and 0 <= self.selectedPos[1] < self.size[1]:
+            selectedCell = self.cell[self.selectedPos[0]][self.selectedPos[1]]
+            selectedUnit = self.unit[self.selectedPos[0]][self.selectedPos[1]]
+            x0 = max(self.selectedPos[0] - selectedUnit.moveRange(), 0)
+            x1 = min(self.selectedPos[0] + selectedUnit.moveRange(), self.size[0])
+            y0 = min(self.selectedPos[1] + selectedUnit.moveRange(), self.size[1])
+            y1 = max(self.selectedPos[1] - selectedUnit.moveRange(), 0)
+            for y in range(y0, y1):
+                for x in range(x0, x1):
+                    self.cell[x][y].type = Type().select'''
+
         ''' if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
             text = "sell Pos:{}\n\tsell Id:{}\t| sell subId:{}\n\tunit Id:{}\t| unit subId:{}".format(
                 self.selectedPos, 
@@ -212,7 +240,6 @@ class Field:
                 self.unit[self.selectedPos[0]][self.selectedPos[1]].type,
                 self.unit[self.selectedPos[0]][self.selectedPos[1]].subType)
             print(text) '''
-
 
         # отрисовка клеток поля
         for y in range(self.size[1]):
@@ -230,11 +257,38 @@ class Field:
                     sprite.image = self.image[1][self.cell[x][y].subType]
                     group.add(sprite)
 
-                # юниты
-                if self.unit[x][y].type == Type().worker:
-                    sprite.image = self.image[2][self.unit[x][y].subType]
+                # селект
+                if self.cell[x][y].isSelected:
+                    sprite.image = self.select
                     group.add(sprite)
+
+        # поле перемещения персонажа
+        if 0 <= self.selectedPos[0] < self.size[0] and 0 <= self.selectedPos[1] < self.size[1]:
+            if self.unit[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
+                if self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected:
+                    sprites = list()
+                    r = self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange()
+                    for _y in range(self.selectedPos[1] - r, self.selectedPos[1] + r + 1):
+                        for _x in range(self.selectedPos[0] - r, self.selectedPos[0] + r + 1):
+                            if _y == self.selectedPos[1] and _x == self.selectedPos[0]: continue
+                            sprite = pygame.sprite.Sprite()
+                            sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
+                            if self.unit[_x][_y].type == Type().void: sprite.image = self.freeCell
+                            else:sprite.image =  self.occupiedCell
+                            sprites.append(sprite)
+                    group.add(sprites)
                 
+        # отрисовка окружения поля
+        for y in range(self.size[1]):
+            for x in range(self.size[0]):
+                sprite = pygame.sprite.Sprite()
+                sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1])) 
+
+                # юниты
+                if self.unit[x][y].type != Type().void:
+                    sprite.image = self.image[2][self.unit[x][y].type - 1]
+                    group.add(sprite)
+
         group.draw(screen)
 
     def event(self):
@@ -251,6 +305,8 @@ class Field:
                 if event.button == 3:
                     x = min(self.mousePos[0], self.size[0] - 1)
                     y = min(self.mousePos[1], self.size[1] - 1)
+                    self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False
+                    self.cell[x][y].isSelected = True
                     self.selectedPos = (x, y)
 
                     text = "sell Pos:{}\n\tsell Id:{}\t| sell subId:{}\n\tunit Id:{}\t| unit subId:{}".format(
@@ -262,13 +318,27 @@ class Field:
                     print(text)
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_0:
-                    x = min(self.mousePos[0], self.size[0] - 1)
-                    y = min(self.mousePos[1], self.size[1] - 1)
-                    self.unit[x][y].type = Type().worker
+                x = min(self.mousePos[0], self.size[0] - 1)
+                y = min(self.mousePos[1], self.size[1] - 1)
+
+                if event.key == pygame.K_0: self.unit[x][y].type = Type().worker
+                if event.key == pygame.K_1: self.unit[x][y].type = Type().saber
+                if event.key == pygame.K_2: self.unit[x][y].type = Type().assassin
+                if event.key == pygame.K_3: self.unit[x][y].type = Type().berserker
+                if event.key == pygame.K_4: self.unit[x][y].type = Type().archer
+                if event.key == pygame.K_5: self.unit[x][y].type = Type().caster
+                if event.key == pygame.K_6: self.unit[x][y].type = Type().rider
+                if event.key == pygame.K_7: self.unit[x][y].type = Type().lancer
+
+                if event.key == pygame.K_s: self.cell[x][y].isSelected = True
+                if event.key == pygame.K_d: self.cell[x][y].isSelected = False
                 
                 if event.key == pygame.K_m:
                     if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
                         if self.unit[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
                             self.unit[self.mousePos[0]][self.mousePos[1]] = self.unit[self.selectedPos[0]][self.selectedPos[1]]
                             self.unit[self.selectedPos[0]][self.selectedPos[1]] = Unit()
+                            self.cell[self.mousePos[0]][self.mousePos[1]].isSelected = True
+                            self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False
+                            self.selectedPos = (x, y)
+
