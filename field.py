@@ -24,7 +24,7 @@ class Field:
         self.unit = [[Unit() for _ in range(size[1])] for _ in range(size[0])]
 
         # размеры
-        self.plates_size = (25, 25)       
+        self.plates_size = (33, 33)       
         # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж окружений   
         self.image = [
             [
@@ -264,22 +264,46 @@ class Field:
 
         # поле перемещения персонажа
         if 0 <= self.selectedPos[0] < self.size[0] and 0 <= self.selectedPos[1] < self.size[1]:
-            if self.unit[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
-                if self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected:
+            x0 = self.selectedPos[0]
+            y0 = self.selectedPos[1]
+
+            if self.unit[x0][y0].type != Type().void:
+                if self.cell[x0][y0].isSelected:
                     sprites = list()
                     # "радиус" зависит от персонажа
-                    r = self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange()
-
+                    r = self.unit[x0][y0].moveRange()
                     # закрашиваем все клетки в "радиусе"
-                    for _y in range(self.selectedPos[1] - r, self.selectedPos[1] + r + 1):
-                        for _x in range(self.selectedPos[0] - r, self.selectedPos[0] + r + 1):
-                            # если клетка под персонажем, то не закрашиваем
-                            if _y == self.selectedPos[1] and _x == self.selectedPos[0]: continue
+                    for _y in range(y0 - r, y0 + r + 1):
+                        for _x in range(x0 - r, x0 + r + 1):
+                            # если на клетке есть юнит то не закрашиваем
+                            if self.unit[_x][_y].type != Type().void: continue
                             sprite = pygame.sprite.Sprite()
                             sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
                             # если на клетке другой персонаж, ходить нельзя 
-                            if self.unit[_x][_y].type == Type().void: sprite.image = self.freeCell
-                            else:sprite.image =  self.occupiedCell
+                            sprite.image = self.freeCell
+
+                            sprites.append(sprite)
+                    group.add(sprites)
+
+        # поле атаки персонажа
+        if 0 <= self.selectedPos[0] < self.size[0] and 0 <= self.selectedPos[1] < self.size[1]:
+            x0 = self.selectedPos[0]
+            y0 = self.selectedPos[1]
+
+            if self.unit[x0][y0].type != Type().void:
+                if self.cell[x0][y0].isSelected:
+                    sprites = list()
+                    # "радиус" зависит от персонажа
+                    r = self.unit[x0][y0].attackRange()
+                    # закрашиваем все клетки в "радиусе"
+                    for _y in range(y0 - r, y0 + r + 1):
+                        for _x in range(x0 - r, x0 + r + 1):
+                            # если на клетке нет юнита, то не закрашиваем
+                            if x0 == _x and y0 == _y: continue
+                            if self.unit[_x][_y].type == Type().void: continue
+                            sprite = pygame.sprite.Sprite()
+                            sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
+                            sprite.image =  self.occupiedCell
 
                             sprites.append(sprite)
                     group.add(sprites)
@@ -317,12 +341,30 @@ class Field:
                     self.cell[x][y].isSelected = True
                     self.selectedPos = (x, y)
 
-                    text = "sell Pos:{}\n\tsell Id:{}\t| sell subId:{}\n\tunit Id:{}\t| unit subId:{}".format(
-                        self.selectedPos, 
+                    text = ''' 
+                    pos: {} 
+                    \tcell:
+                    \t\ttype:\t\t{}
+                    \t\tsubType:\t{}
+                    \t\tselect:\t\t{}
+                    \tunit:
+                    \t\ttype:\t\t{}
+                    \t\tsubType:\t{}
+                    \t\thealth:\t\t{}
+                    \t\tdamage:\t\t{}
+                    \t\tmoveRange:\t{}
+                    \t\tattacRange:\t{}
+                    '''.format(
+                        self.selectedPos,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
+                        self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected,
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].type,
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].subType)
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].subType,
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].health(),
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].damage(),
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange(),
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].attackRange())
                     print(text)
 
             if event.type == pygame.KEYDOWN:
@@ -330,14 +372,14 @@ class Field:
                 y = min(self.mousePos[1], self.size[1] - 1)
 
                 # спавн персонажей (временно)
-                if event.key == pygame.K_0: self.unit[x][y].type = Type().worker
-                if event.key == pygame.K_1: self.unit[x][y].type = Type().saber
-                if event.key == pygame.K_2: self.unit[x][y].type = Type().assassin
-                if event.key == pygame.K_3: self.unit[x][y].type = Type().berserker
-                if event.key == pygame.K_4: self.unit[x][y].type = Type().archer
-                if event.key == pygame.K_5: self.unit[x][y].type = Type().caster
-                if event.key == pygame.K_6: self.unit[x][y].type = Type().rider
-                if event.key == pygame.K_7: self.unit[x][y].type = Type().lancer
+                if event.key == pygame.K_0: self.unit[x][y].type, self.unit[x][y].subType = Type().worker, 0
+                if event.key == pygame.K_1: self.unit[x][y].type, self.unit[x][y].subType = Type().saber, 0
+                if event.key == pygame.K_2: self.unit[x][y].type, self.unit[x][y].subType = Type().assassin, 0
+                if event.key == pygame.K_3: self.unit[x][y].type, self.unit[x][y].subType = Type().berserker, 0
+                if event.key == pygame.K_4: self.unit[x][y].type, self.unit[x][y].subType = Type().archer, 0
+                if event.key == pygame.K_5: self.unit[x][y].type, self.unit[x][y].subType = Type().caster, 0
+                if event.key == pygame.K_6: self.unit[x][y].type, self.unit[x][y].subType = Type().rider, 0
+                if event.key == pygame.K_7: self.unit[x][y].type, self.unit[x][y].subType = Type().lancer, 0
 
                 # поставить/убрать визуализацию селекта на клетку
                 if event.key == pygame.K_s: self.cell[x][y].isSelected = True
@@ -349,23 +391,10 @@ class Field:
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].lvlUp()
                     print(self.unit[x][y].subType)
                 
-                # перемещение
-                if event.key == pygame.K_m:
-                    self.moveUnit(self.selectedPos, self.mousePos)
-                    '''if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
-                        if self.unit[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
-                            # если ходим не под себя
-                            if self.selectedPos != self.mousePos:
-                                # если ходим на заданное расстояние
-                                if abs(self.selectedPos[0] - self.mousePos[0]) <= self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange() and \
-                                   abs(self.selectedPos[1] - self.mousePos[1]) <= self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange():
-                                    # переносим персонажа
-                                    self.unit[self.mousePos[0]][self.mousePos[1]] = self.unit[self.selectedPos[0]][self.selectedPos[1]]
-                                    self.unit[self.selectedPos[0]][self.selectedPos[1]] = Unit()
-                                    # переносим селект
-                                    self.cell[self.mousePos[0]][self.mousePos[1]].isSelected = True
-                                    self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False
-                                    self.selectedPos = (x, y)'''
+                # переместить
+                if event.key == pygame.K_m: self.moveUnit(self.selectedPos, self.mousePos)
+                # быкануть
+                if event.key == pygame.K_a: self.attackUnit(self.selectedPos, self.mousePos)
     
     def moveUnit(self, From, To):
         x0, y0 = From[0], From[1]
@@ -385,9 +414,38 @@ class Field:
                     self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
                     self.selectedPos = (x1, y1)
     
-                # если клетка не пуста, то ходим только в том случае, если униту хватает атаки
-                else:
-                    if self.unit[x0][y0].damage() >= self.unit[x1][y1].health():
-                        self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
-                        self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
-                        self.selectedPos = (x1, y1)
+    def attackUnit(self, From, To):
+        x0, y0 = From[0], From[1]
+        x1, y1 = To[0], To[1]
+
+        if 0 <= x1 < self.size[0] and 0 <= y1 < self.size[1]:
+            if self.unit[x0][y0].type != Type().void:
+                # если пытаемся атаковать на слишком дальнее расстояние
+                if abs(x1 - x0) > self.unit[x0][y0].attackRange() or abs(y1 - y0) > self.unit[x0][y0].attackRange(): return
+                # самовыпил - не варик
+                if From == To: return
+
+                # если атакуем не пустую клетку 
+                if self.unit[x1][y1].type != Type().void:
+                    
+                    
+                    # если больше атаки - то побеждаем, если атаки равны и хп больше - то побеждаем, иначе смэрть
+                    win = 0
+                    if self.unit[x0][y0].damage() >= self.unit[x1][y1].health(): win = True
+                    elif self.unit[x0][y0].health() > self.unit[x1][y1].damage(): return
+                    else: win = False
+
+                    # милишники занимают клетку атакуемого
+                    if self.unit[x0][y0].attackRange() == 1:
+                        if win:
+                            self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
+                            self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
+                            self.selectedPos = (x1, y1)
+                        else:
+                            self.cell[x0][y0].isSelected = False
+                            self.unit[x0][y0] = Unit()
+
+                    # дальники просто убивают
+                    else:
+                        if win:
+                            self.unit[x1][y1] = Unit()

@@ -5,7 +5,7 @@ import pygame
 
 
 if __name__ == '__main__':
-    field = Field((40, 40), 1, (1300, 1000))
+    field = Field((30, 30), 1, (1300, 1000))
     field.generateMap()
 
     pygame.init()
