@@ -24,7 +24,7 @@ UNITPARAMETERS = [
 
 
 class Unit:
-    def __init__(self, Type=None, subType=None):
+    def __init__(self, Type=None, subType=None, team=None):
         if Type == None: self.type = 0
         else: self.type = Type
 
@@ -34,9 +34,17 @@ class Unit:
     def lvlUp(self):
         self.subType = min(self.subType + 1, 2)
     
+    def health(self):
+        return UNITPARAMETERS[self.type][self.subType][0]
+
+    def damage(self):
+        return UNITPARAMETERS[self.type][self.subType][1]
+    
     def moveRange(self):
-        a = UNITPARAMETERS[self.type][self.subType]
-        return a[2]
+        return UNITPARAMETERS[self.type][self.subType][2]
+    
+    def attackRange(self):
+        return UNITPARAMETERS[self.type][self.subType][3]
 
 
 '''

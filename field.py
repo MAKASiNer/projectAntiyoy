@@ -267,14 +267,20 @@ class Field:
             if self.unit[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
                 if self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected:
                     sprites = list()
+                    # "радиус" зависит от персонажа
                     r = self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange()
+
+                    # закрашиваем все клетки в "радиусе"
                     for _y in range(self.selectedPos[1] - r, self.selectedPos[1] + r + 1):
                         for _x in range(self.selectedPos[0] - r, self.selectedPos[0] + r + 1):
+                            # если клетка под персонажем, то не закрашиваем
                             if _y == self.selectedPos[1] and _x == self.selectedPos[0]: continue
                             sprite = pygame.sprite.Sprite()
                             sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
+                            # если на клетке другой персонаж, ходить нельзя 
                             if self.unit[_x][_y].type == Type().void: sprite.image = self.freeCell
                             else:sprite.image =  self.occupiedCell
+
                             sprites.append(sprite)
                     group.add(sprites)
                 
@@ -296,11 +302,13 @@ class Field:
             if event.type == pygame.QUIT:
                 pygame.quit()
 
+            # задаем координаты мышки
             if event.type == pygame.MOUSEMOTION:
                 x = event.pos[0] // self.plates_size[0]
                 y = event.pos[1] // self.plates_size[1]
                 self.mousePos = (x, y)
 
+            # задаем селект
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 3:
                     x = min(self.mousePos[0], self.size[0] - 1)
@@ -321,6 +329,7 @@ class Field:
                 x = min(self.mousePos[0], self.size[0] - 1)
                 y = min(self.mousePos[1], self.size[1] - 1)
 
+                # спавн персонажей (временно)
                 if event.key == pygame.K_0: self.unit[x][y].type = Type().worker
                 if event.key == pygame.K_1: self.unit[x][y].type = Type().saber
                 if event.key == pygame.K_2: self.unit[x][y].type = Type().assassin
@@ -330,15 +339,55 @@ class Field:
                 if event.key == pygame.K_6: self.unit[x][y].type = Type().rider
                 if event.key == pygame.K_7: self.unit[x][y].type = Type().lancer
 
+                # поставить/убрать визуализацию селекта на клетку
                 if event.key == pygame.K_s: self.cell[x][y].isSelected = True
                 if event.key == pygame.K_d: self.cell[x][y].isSelected = False
-                
-                if event.key == pygame.K_m:
-                    if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
-                        if self.unit[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
-                            self.unit[self.mousePos[0]][self.mousePos[1]] = self.unit[self.selectedPos[0]][self.selectedPos[1]]
-                            self.unit[self.selectedPos[0]][self.selectedPos[1]] = Unit()
-                            self.cell[self.mousePos[0]][self.mousePos[1]].isSelected = True
-                            self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False
-                            self.selectedPos = (x, y)
 
+                # лвлапп персонажа
+                if event.key == pygame.K_u:
+                    if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].lvlUp()
+                    print(self.unit[x][y].subType)
+                
+                # перемещение
+                if event.key == pygame.K_m:
+                    self.moveUnit(self.selectedPos, self.mousePos)
+                    '''if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
+                        if self.unit[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
+                            # если ходим не под себя
+                            if self.selectedPos != self.mousePos:
+                                # если ходим на заданное расстояние
+                                if abs(self.selectedPos[0] - self.mousePos[0]) <= self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange() and \
+                                   abs(self.selectedPos[1] - self.mousePos[1]) <= self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange():
+                                    # переносим персонажа
+                                    self.unit[self.mousePos[0]][self.mousePos[1]] = self.unit[self.selectedPos[0]][self.selectedPos[1]]
+                                    self.unit[self.selectedPos[0]][self.selectedPos[1]] = Unit()
+                                    # переносим селект
+                                    self.cell[self.mousePos[0]][self.mousePos[1]].isSelected = True
+                                    self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False
+                                    self.selectedPos = (x, y)'''
+    
+    def moveUnit(self, From, To):
+        x0, y0 = From[0], From[1]
+        x1, y1 = To[0], To[1]
+
+        if 0 <= x1 < self.size[0] and 0 <= y1 < self.size[1]:
+            if self.unit[x0][y0].type != Type().void:
+                # если ходим на слишком далекое расстояние
+                if abs(x1 - x0) > self.unit[x0][y0].moveRange() or abs(y1 - y0) > self.unit[x0][y0].moveRange(): return
+
+                # если ходим под себя, то не ходим
+                if From == To: return
+
+                # если ходим на пустую клетку, то ходим
+                if self.unit[x1][y1].type == Type().void:
+                    self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
+                    self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
+                    self.selectedPos = (x1, y1)
+    
+                # если клетка не пуста, то ходим только в том случае, если униту хватает атаки
+                else:
+                    if self.unit[x0][y0].damage() >= self.unit[x1][y1].health():
+                        self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
+                        self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
+                        self.selectedPos = (x1, y1)
