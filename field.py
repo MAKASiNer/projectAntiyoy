@@ -36,14 +36,46 @@ class Field:
                 pygame.transform.scale(pygame.image.load("source/texture/mountain.png"), self.plates_size),
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/worker.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/saber.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/assassin.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/berserker.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/archer.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/caster.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/rider.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/lancer.png"), self.plates_size)
+                [
+                    pygame.transform.scale(pygame.image.load("source/texture/worker0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/worker1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/worker2.png"), self.plates_size)
+                ],
+                [
+                    pygame.transform.scale(pygame.image.load("source/texture/saber0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/saber1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/saber2.png"), self.plates_size)
+                ],
+                [
+                    pygame.transform.scale(pygame.image.load("source/texture/assassin0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/assassin1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/assassin2.png"), self.plates_size)
+                ],
+                [
+                    pygame.transform.scale(pygame.image.load("source/texture/berserker0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/berserker1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/berserker2.png"), self.plates_size)
+                ],
+                [
+                    pygame.transform.scale(pygame.image.load("source/texture/archer0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/archer1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/archer2.png"), self.plates_size)
+                ],
+                [
+                    pygame.transform.scale(pygame.image.load("source/texture/caster0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/caster1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/caster2.png"), self.plates_size)
+                ],
+                [
+                    pygame.transform.scale(pygame.image.load("source/texture/rider0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/rider1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/rider2.png"), self.plates_size)
+                ],
+                [
+                    pygame.transform.scale(pygame.image.load("source/texture/lancer0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/lancer1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/lancer2.png"), self.plates_size)
+                ]
             ]
         ]
 
@@ -309,7 +341,7 @@ class Field:
 
                 # юниты
                 if self.unit[x][y].type != Type().void:
-                    sprite.image = self.image[2][self.unit[x][y].type - 1]
+                    sprite.image = self.image[2][self.unit[x][y].type - 1][self.unit[x][y].subType]
                     group.add(sprite)
 
         group.draw(screen)
@@ -335,20 +367,20 @@ class Field:
                     self.selectedPos = (x, y)
 
                     text = '''
-                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    pos: {} 
-                    \tcell:
-                    \t\ttype:\t\t{}
-                    \t\tsubType:\t{}
-                    \t\tselect:\t\t{}
-                    \tunit:
-                    \t\ttype:\t\t{}
-                    \t\tsubType:\t{}
-                    \t\thealth:\t\t{}
-                    \t\tdamage:\t\t{}
-                    \t\tmoveRange:\t{}
-                    \t\tattacRange:\t{}
-                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pos: {} 
+\tcell:
+\t\ttype:\t\t{}
+\t\tsubType:\t{}
+\t\tselect:\t\t{}
+\tunit:
+\t\ttype:\t\t{}
+\t\tsubType:\t{}
+\t\thealth:\t\t{}
+\t\tdamage:\t\t{}
+\t\tmoveRange:\t{}
+\t\tattacRange:\t{}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     '''.format(
                         self.selectedPos,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
