@@ -12,7 +12,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(field.winSize)
 
     while True:
-        field.event()
         field.render(screen)
+        field.event() 
         pygame.display.flip()
     pygame.quit()

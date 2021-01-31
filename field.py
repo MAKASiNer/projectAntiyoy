@@ -208,7 +208,25 @@ class Field:
                 elif clr == (150, 150, 150): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 0)
                 elif clr == (255, 255, 255): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().void)
 
+        # создаем бекграунд
         image.save("source/pattern/pattern_step_2.png")
+        image = Image.new("RGBA", (self.plates_size[0] * self.size[0] - 1, self.plates_size[1] * self.size[1] - 1), (255, 255, 255))
+        pixel = image.load()
+
+        for x in range(0, image.size[0]):
+            for y in range(0, image.size[1]):
+
+                _x = x // self.plates_size[0]
+                _y = y // self.plates_size[1]
+                cell_l = self.cell[_x][_y]
+
+                if cell_l.type == Type().void or cell_l.type == Type().ground:
+                    clr = self.image[cell_l.type][cell_l.subType].get_at((x % self.plates_size[0], y % self.plates_size[1 ]))
+                    pixel[x, y] = (clr[0], clr[1], clr[2], clr[3])
+        image.save("source/pattern/pattern_step_3.png")
+        self.background = pygame.image.load("source/pattern/pattern_step_3.png")
+
+
 
     def render(self, screen):
         group = pygame.sprite.Group()
@@ -220,43 +238,18 @@ class Field:
         sprite.image = self.lefBg
         group.add(sprite)
 
-        '''# отрисовка селекта поля
-        if 0 <= self.selectedPos[0] < self.size[0] and 0 <= self.selectedPos[1] < self.size[1]:
-            selectedCell = self.cell[self.selectedPos[0]][self.selectedPos[1]]
-            selectedUnit = self.unit[self.selectedPos[0]][self.selectedPos[1]]
-            x0 = max(self.selectedPos[0] - selectedUnit.moveRange(), 0)
-            x1 = min(self.selectedPos[0] + selectedUnit.moveRange(), self.size[0])
-            y0 = min(self.selectedPos[1] + selectedUnit.moveRange(), self.size[1])
-            y1 = max(self.selectedPos[1] - selectedUnit.moveRange(), 0)
-            for y in range(y0, y1):
-                for x in range(x0, x1):
-                    self.cell[x][y].type = Type().select'''
+        # бекграунд
+        sprite = pygame.sprite.Sprite()
+        sprite.rect = (0, 0)
+        sprite.image = self.background
+        group.add(sprite)
 
-        ''' if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
-            text = "sell Pos:{}\n\tsell Id:{}\t| sell subId:{}\n\tunit Id:{}\t| unit subId:{}".format(
-                self.selectedPos, 
-                self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
-                self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
-                self.unit[self.selectedPos[0]][self.selectedPos[1]].type,
-                self.unit[self.selectedPos[0]][self.selectedPos[1]].subType)
-            print(text) '''
 
         # отрисовка клеток поля
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
                 sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1]))
-
-                # пустые клетки
-                if self.cell[x][y].type == Type().void:
-                    sprite.image = self.image[0][0]
-                    group.add(sprite)
-                
-                # земля
-                if self.cell[x][y].type == Type().ground:
-                    sprite.image = self.image[1][self.cell[x][y].subType]
-                    group.add(sprite)
-
                 # селект
                 if self.cell[x][y].isSelected:
                     sprite.image = self.select
@@ -341,7 +334,8 @@ class Field:
                     self.cell[x][y].isSelected = True
                     self.selectedPos = (x, y)
 
-                    text = ''' 
+                    text = '''
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     pos: {} 
                     \tcell:
                     \t\ttype:\t\t{}
@@ -354,6 +348,7 @@ class Field:
                     \t\tdamage:\t\t{}
                     \t\tmoveRange:\t{}
                     \t\tattacRange:\t{}
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     '''.format(
                         self.selectedPos,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
