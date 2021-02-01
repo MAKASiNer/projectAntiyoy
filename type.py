@@ -4,6 +4,8 @@
 По умолчанию у всех обьектов стоит тип void = пустой
 
 Нумерация типов начинается с 1 т.к. для всех по умолчанию стоит void == 0
+
+Для зданий plate - строительная площадка 
 '''
 
 
@@ -26,7 +28,8 @@ class Type:
         self.rider       =7
         self.lancer      =8
 
-        self.barracks    =1
-        self.farm        =2
-        self.quarry      =3
-        self.sawmillё    =4
+        self.plate       =1
+        self.barracks    =2
+        self.farm        =3
+        self.quarry      =4
+        self.sawmill     =5

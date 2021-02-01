@@ -2,6 +2,7 @@ from PIL import Image, ImageDraw
 from cell import Type, Cell
 from unit import Unit
 from type import Type
+from building import Building
 
 import math
 import random
@@ -23,19 +24,24 @@ class Field:
         self.cell = [[Cell() for _ in range(size[1])] for _ in range(size[0])]
         # юниты
         self.unit = [[Unit() for _ in range(size[1])] for _ in range(size[0])]
+        # постройки
+        self.building = [[Building() for _ in range(size[1])] for _ in range(size[0])]
 
         # размеры
         self.plates_size = (33, 33)       
         # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж окружений   
         self.image = [
+            # 0
             [
                 pygame.transform.scale(pygame.image.load("source/texture/void.png"), self.plates_size)
             ], 
+            # 1
             [
                 pygame.transform.scale(pygame.image.load("source/texture/ground/steppe.png"), self.plates_size),
                 pygame.transform.scale(pygame.image.load("source/texture/ground/forest.png"), self.plates_size),
                 pygame.transform.scale(pygame.image.load("source/texture/ground/mountain.png"), self.plates_size),
             ],
+            # 2
             [
                 [
                     pygame.transform.scale(pygame.image.load("source/texture/unit/worker0.png"), self.plates_size),
@@ -77,6 +83,14 @@ class Field:
                     pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), self.plates_size),
                     pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), self.plates_size)
                 ]
+            ],
+            # 3
+            [
+                pygame.transform.scale(pygame.image.load("source/texture/building/plate.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/barracks.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/farm.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/quarry.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill.png"), self.plates_size)
             ]
         ]
 
@@ -301,8 +315,8 @@ class Field:
                     # закрашиваем все клетки в "радиусе"
                     for _y in range(y0 - r, y0 + r + 1):
                         for _x in range(x0 - r, x0 + r + 1):
-                            # если на клетке есть юнит то не закрашиваем
-                            if self.unit[_x][_y].type != Type().void: continue
+                            # если на клетке есть юнит или здание то не закрашиваем
+                            if self.unit[_x][_y].type != Type().void or self.building[_x][_y].type != Type().void: continue
                             sprite = pygame.sprite.Sprite()
                             sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
                             # если на клетке другой персонаж, ходить нельзя 
@@ -324,9 +338,9 @@ class Field:
                     # закрашиваем все клетки в "радиусе"
                     for _y in range(y0 - r, y0 + r + 1):
                         for _x in range(x0 - r, x0 + r + 1):
-                            # если на клетке нет юнита, то не закрашиваем
+                            # если на клетке нет ни юнита, ни здания, то не закрашиваем
                             if x0 == _x and y0 == _y: continue
-                            if self.unit[_x][_y].type == Type().void: continue
+                            if self.unit[_x][_y].type == Type().void and self.building[_x][_y].type == Type().void: continue
                             sprite = pygame.sprite.Sprite()
                             sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
                             sprite.image =  self.occupiedCell
@@ -339,6 +353,11 @@ class Field:
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
                 sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1])) 
+
+                # здания
+                if self.building[x][y].type != Type().void:
+                    sprite.image = self.image[3][self.building[x][y].type - 1]
+                    group.add(sprite)
 
                 # юниты
                 if self.unit[x][y].type != Type().void:
@@ -381,8 +400,10 @@ pos: {}
 \t\tdamage:\t\t{}
 \t\tmoveRange:\t{}
 \t\tattacRange:\t{}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    '''.format(
+\tbuilding:
+\t\ttype:\t\t{}
+\t\tsubType:\t{}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ '''.format(
                         self.selectedPos,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
@@ -392,7 +413,9 @@ pos: {}
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].health(),
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].damage(),
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange(),
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].attackRange())
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].attackRange(),
+                        self.building[self.selectedPos[0]][self.selectedPos[1]].type,
+                        self.building[self.selectedPos[0]][self.selectedPos[1]].subType)
                     print(text)
 
             if event.type == pygame.KEYDOWN:
@@ -408,16 +431,24 @@ pos: {}
                 if event.key == pygame.K_5: self.unit[x][y].type, self.unit[x][y].subType = Type().caster, 0
                 if event.key == pygame.K_6: self.unit[x][y].type, self.unit[x][y].subType = Type().rider, 0
                 if event.key == pygame.K_7: self.unit[x][y].type, self.unit[x][y].subType = Type().lancer, 0
+                #спавн зданий (временно)
+                if event.key == pygame.K_F1: self.building[x][y].type, self.building[x][y].subType = Type().plate, 0
+                if event.key == pygame.K_F2: self.building[x][y].type, self.building[x][y].subType = Type().barracks, 0
+                if event.key == pygame.K_F3: self.building[x][y].type, self.building[x][y].subType = Type().farm, 0
+                if event.key == pygame.K_F4: self.building[x][y].type, self.building[x][y].subType = Type().quarry, 0
+                if event.key == pygame.K_F5: self.building[x][y].type, self.building[x][y].subType = Type().sawmill, 0
+                # юниты уничтожают здания (временно)
+                if self.unit[x][y].type != Type().void: self.building[x][y] = Building()
 
                 # поставить/убрать визуализацию селекта на клетку
                 if event.key == pygame.K_s: self.cell[x][y].isSelected = True
                 if event.key == pygame.K_d: self.cell[x][y].isSelected = False
 
-                # лвлапп персонажа
+                # лвлапп
                 if event.key == pygame.K_u:
                     if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].lvlUp()
-                    print(self.unit[x][y].subType)
+                        if self.unit[x][y].type != Type().void: self.unit[self.selectedPos[0]][self.selectedPos[1]].lvlUp()
+                        if self.building[x][y].type != Type().void: self.building[self.selectedPos[0]][self.selectedPos[1]].lvlUp()
                 
                 # переместить
                 if event.key == pygame.K_m: self.moveUnit(self.selectedPos, self.mousePos)
@@ -437,7 +468,7 @@ pos: {}
                 if From == To: return
 
                 # если ходим на пустую клетку, то ходим
-                if self.unit[x1][y1].type == Type().void:
+                if self.unit[x1][y1].type == Type().void and self.building[x1][y1].type == Type().void:
                     self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
                     self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
                     self.selectedPos = (x1, y1)
@@ -453,9 +484,8 @@ pos: {}
                 # самовыпил - не варик
                 if From == To: return
 
-                # если атакуем не пустую клетку 
+                # если юнита
                 if self.unit[x1][y1].type != Type().void:
-                    
                     
                     # если больше атаки - то побеждаем, если атаки равны и хп больше - то побеждаем, иначе смэрть
                     win = 0
@@ -477,3 +507,15 @@ pos: {}
                     else:
                         if win:
                             self.unit[x1][y1] = Unit()
+                
+                # если атакуем постройку
+                if self.building[x1][y1].type != Type().void:
+                    # милишники занимают клетку атакуемого
+                    if self.unit[x0][y0].attackRange() == 1:
+                            self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
+                            self.building[x1][y1].type = Type().void if self.building[x1][y1].type == Type().plate else Type().plate
+                            self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
+                            self.selectedPos = (x1, y1)
+                    # дальники просто убивают
+                    else:
+                        self.building[x1][y1].type = Type().void if self.building[x1][y1].type == Type().plate else Type().plate

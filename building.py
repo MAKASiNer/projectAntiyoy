@@ -9,3 +9,6 @@ class Building:
 
         if subType == None: self.subType = 0
         else: self.subType = subType
+    
+    def lvlUp(self):
+        self.subType = min(self.subType + 1, 2)
