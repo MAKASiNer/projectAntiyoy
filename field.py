@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw 
 from cell import Type, Cell
 from unit import Unit
+from type import Type
 
 import math
 import random
@@ -31,50 +32,50 @@ class Field:
                 pygame.transform.scale(pygame.image.load("source/texture/void.png"), self.plates_size)
             ], 
             [
-                pygame.transform.scale(pygame.image.load("source/texture/steppe.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/forest.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/mountain.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/ground/steppe.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/ground/forest.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/ground/mountain.png"), self.plates_size),
             ],
             [
                 [
-                    pygame.transform.scale(pygame.image.load("source/texture/worker0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/worker1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/worker2.png"), self.plates_size)
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/worker0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/worker1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/worker2.png"), self.plates_size)
                 ],
                 [
-                    pygame.transform.scale(pygame.image.load("source/texture/saber0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/saber1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/saber2.png"), self.plates_size)
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/saber0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/saber1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/saber2.png"), self.plates_size)
                 ],
                 [
-                    pygame.transform.scale(pygame.image.load("source/texture/assassin0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/assassin1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/assassin2.png"), self.plates_size)
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/assassin1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/assassin2.png"), self.plates_size)
                 ],
                 [
-                    pygame.transform.scale(pygame.image.load("source/texture/berserker0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/berserker1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/berserker2.png"), self.plates_size)
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/berserker0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/berserker1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/berserker2.png"), self.plates_size)
                 ],
                 [
-                    pygame.transform.scale(pygame.image.load("source/texture/archer0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/archer1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/archer2.png"), self.plates_size)
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/archer0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/archer1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/archer2.png"), self.plates_size)
                 ],
                 [
-                    pygame.transform.scale(pygame.image.load("source/texture/caster0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/caster1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/caster2.png"), self.plates_size)
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/caster0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/caster1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/caster2.png"), self.plates_size)
                 ],
                 [
-                    pygame.transform.scale(pygame.image.load("source/texture/rider0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/rider1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/rider2.png"), self.plates_size)
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/rider0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/rider1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/rider2.png"), self.plates_size)
                 ],
                 [
-                    pygame.transform.scale(pygame.image.load("source/texture/lancer0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/lancer1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/lancer2.png"), self.plates_size)
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), self.plates_size),
+                    pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), self.plates_size)
                 ]
             ]
         ]
@@ -367,7 +368,7 @@ class Field:
                     self.selectedPos = (x, y)
 
                     text = '''
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 pos: {} 
 \tcell:
 \t\ttype:\t\t{}
@@ -380,7 +381,7 @@ pos: {}
 \t\tdamage:\t\t{}
 \t\tmoveRange:\t{}
 \t\tattacRange:\t{}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     '''.format(
                         self.selectedPos,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].type,

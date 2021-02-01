@@ -1,4 +1,6 @@
-import pygame
+from type import Type
+
+
 
 # hp/dmg/mr/ar
 UNITPARAMETERS = [
