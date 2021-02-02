@@ -4,6 +4,7 @@ from unit import Unit
 from type import Type
 from building import Building
 
+import copy
 import math
 import random
 import pygame
@@ -18,7 +19,7 @@ class Field:
         self.playerCount = playerCount          # количество игроков
         self.mousePos = (-1, -1)                # координаты мышки в клетках
         self.selectedPos = (-1, -1)             # выбранная позиция
-        self.winSize = winSize                  # размеры окна
+        self.winSize = winSize                  # размеры окна              
 
         # клетки поля
         self.cell = [[Cell() for _ in range(size[1])] for _ in range(size[0])]
@@ -26,6 +27,17 @@ class Field:
         self.unit = [[Unit() for _ in range(size[1])] for _ in range(size[0])]
         # постройки
         self.building = [[Building() for _ in range(size[1])] for _ in range(size[0])]
+
+        # буффер ходов
+        self.stepBuffer = [
+            [
+                copy.deepcopy(self.cell),
+                copy.deepcopy(self.unit),
+                copy.deepcopy(self.building),
+                copy.deepcopy(self.selectedPos),
+                0
+            ]
+        ]
 
         # размеры
         self.plates_size = (33, 33)       
@@ -273,8 +285,6 @@ class Field:
         image.save("source/pattern/pattern_step_3.png")
         self.background = pygame.image.load("source/pattern/pattern_step_3.png")
 
-
-
     def render(self, screen):
         group = pygame.sprite.Group()
 
@@ -316,13 +326,14 @@ class Field:
                     for _y in range(y0 - r, y0 + r + 1):
                         for _x in range(x0 - r, x0 + r + 1):
                             # если на клетке есть юнит или здание то не закрашиваем
-                            if self.unit[_x][_y].type != Type().void or self.building[_x][_y].type != Type().void: continue
-                            sprite = pygame.sprite.Sprite()
-                            sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
-                            # если на клетке другой персонаж, ходить нельзя 
-                            sprite.image = self.freeCell
-
-                            sprites.append(sprite)
+                            try:
+                                if self.unit[_x][_y].type != Type().void or self.building[_x][_y].type != Type().void: continue
+                                sprite = pygame.sprite.Sprite()
+                                sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
+                                # если на клетке другой персонаж, ходить нельзя 
+                                sprite.image = self.freeCell
+                                sprites.append(sprite)
+                            except: pass
                     group.add(sprites)
 
         # поле атаки персонажа
@@ -340,12 +351,13 @@ class Field:
                         for _x in range(x0 - r, x0 + r + 1):
                             # если на клетке нет ни юнита, ни здания, то не закрашиваем
                             if x0 == _x and y0 == _y: continue
-                            if self.unit[_x][_y].type == Type().void and self.building[_x][_y].type == Type().void: continue
-                            sprite = pygame.sprite.Sprite()
-                            sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
-                            sprite.image =  self.occupiedCell
-
-                            sprites.append(sprite)
+                            try:
+                                if self.unit[_x][_y].type == Type().void and self.building[_x][_y].type == Type().void: continue
+                                sprite = pygame.sprite.Sprite()
+                                sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
+                                sprite.image =  self.occupiedCell
+                                sprites.append(sprite)
+                            except: pass
                     group.add(sprites)
                 
         # отрисовка окружения поля
@@ -386,24 +398,24 @@ class Field:
                     self.cell[x][y].isSelected = True
                     self.selectedPos = (x, y)
 
-                    text = '''
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pos: {} 
-\tcell:
-\t\ttype:\t\t{}
-\t\tsubType:\t{}
-\t\tselect:\t\t{}
-\tunit:
-\t\ttype:\t\t{}
-\t\tsubType:\t{}
-\t\thealth:\t\t{}
-\t\tdamage:\t\t{}
-\t\tmoveRange:\t{}
-\t\tattacRange:\t{}
-\tbuilding:
-\t\ttype:\t\t{}
-\t\tsubType:\t{}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ '''.format(
+                    text = "\
+                    \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
+                    \npos: {}\
+                    \n\tcell:\
+                    \n\t\ttype:\t\t{}\
+                    \n\t\tsubType:\t{}\
+                    \n\t\tselect:\t\t{}\
+                    \n\tunit:\
+                    \n\t\ttype:\t\t{}\
+                    \n\t\tsubType:\t{}\
+                    \n\t\thealth:\t\t{}\
+                    \n\t\tdamage:\t\t{}\
+                    \n\t\tmoveRange:\t{}\
+                    \n\t\tattacRange:\t{}\
+                    \n\tbuilding:\
+                    \n\t\ttype:\t\t{}\
+                    \n\t\tsubType:\t{}\
+                    \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".format(
                         self.selectedPos,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
@@ -419,18 +431,27 @@ pos: {}
                     print(text)
 
             if event.type == pygame.KEYDOWN:
+                
                 x = min(self.mousePos[0], self.size[0] - 1)
                 y = min(self.mousePos[1], self.size[1] - 1)
 
                 # спавн персонажей (временно)
-                if event.key == pygame.K_0: self.unit[x][y].type, self.unit[x][y].subType = Type().worker, 0
-                if event.key == pygame.K_1: self.unit[x][y].type, self.unit[x][y].subType = Type().saber, 0
-                if event.key == pygame.K_2: self.unit[x][y].type, self.unit[x][y].subType = Type().assassin, 0
-                if event.key == pygame.K_3: self.unit[x][y].type, self.unit[x][y].subType = Type().berserker, 0
-                if event.key == pygame.K_4: self.unit[x][y].type, self.unit[x][y].subType = Type().archer, 0
-                if event.key == pygame.K_5: self.unit[x][y].type, self.unit[x][y].subType = Type().caster, 0
-                if event.key == pygame.K_6: self.unit[x][y].type, self.unit[x][y].subType = Type().rider, 0
-                if event.key == pygame.K_7: self.unit[x][y].type, self.unit[x][y].subType = Type().lancer, 0
+                if event.key == pygame.K_0: 
+                    self.unit[x][y] = Unit(Type().worker)
+                if event.key == pygame.K_1: 
+                    self.unit[x][y] = Unit(Type().saber)
+                if event.key == pygame.K_2: 
+                    self.unit[x][y] = Unit(Type().assassin)
+                if event.key == pygame.K_3: 
+                    self.unit[x][y] = Unit(Type().berserker)
+                if event.key == pygame.K_4: 
+                    self.unit[x][y] = Unit(Type().archer)
+                if event.key == pygame.K_5: 
+                    self.unit[x][y] = Unit(Type().caster)
+                if event.key == pygame.K_6: 
+                    self.unit[x][y] = Unit(Type().rider)
+                if event.key == pygame.K_7: 
+                    self.unit[x][y] = Unit(Type().lancer)
                 #спавн зданий (временно)
                 if event.key == pygame.K_F1: self.building[x][y].type, self.building[x][y].subType = Type().plate, 0
                 if event.key == pygame.K_F2: self.building[x][y].type, self.building[x][y].subType = Type().barracks, 0
@@ -454,6 +475,10 @@ pos: {}
                 if event.key == pygame.K_m: self.moveUnit(self.selectedPos, self.mousePos)
                 # быкануть
                 if event.key == pygame.K_a: self.attackUnit(self.selectedPos, self.mousePos)
+
+                # откат хода
+                if event.key == pygame.K_z: self.loadFromStepBuffer()
+                else: self.loadToStepBuffer()
     
     def moveUnit(self, From, To):
         x0, y0 = From[0], From[1]
@@ -519,3 +544,49 @@ pos: {}
                     # дальники просто убивают
                     else:
                         self.building[x1][y1].type = Type().void if self.building[x1][y1].type == Type().plate else Type().plate
+
+    def loadToStepBuffer(self):
+        # елемент содержит информацию о клетках, юнитах, строениях и селекту
+        element = [
+            copy.deepcopy(self.cell),
+            copy.deepcopy(self.unit),
+            copy.deepcopy(self.building),
+            copy.deepcopy(self.selectedPos),
+            len(self.stepBuffer)
+        ]
+
+        # проверка, отличается ли новый элемент от предыдущего
+        state = False
+
+        for y in range(self.size[1]):
+            for x in range(self.size[0]):
+                if element[0][x][y] != self.stepBuffer[-1][0][x][y]: state = True
+                elif element[1][x][y] != self.stepBuffer[-1][1][x][y]: state = True
+                elif element[2][x][y] != self.stepBuffer[-1][2][x][y]: state = True
+                if state: break
+            if state: break
+
+        # если отличается, заливает в буффер
+        if state: self.stepBuffer.append(element)     
+            
+    def loadFromStepBuffer(self):
+        # если в буффере более 1 элемента
+        indx = len(self.stepBuffer) - 2
+
+        if indx > 0:
+            # вытаскивает предпоследний элемент буффера
+            element = self.stepBuffer.pop(indx)
+            self.cell = element[0]
+            self.unit = element[1]
+            self.building = element[2]
+            self.selectedPos = element[3]
+        else:
+            # еее кастылина (удаляет последний элемент)
+            if len(self.stepBuffer) > 1: self.stepBuffer.pop()
+            
+            # копирует первый элемент буфера
+            element = copy.deepcopy(self.stepBuffer[0])
+            self.cell = element[0]
+            self.unit = element[1]
+            self.building = element[2]
+            self.selectedPos = element[3]

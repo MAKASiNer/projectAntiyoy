@@ -14,3 +14,11 @@ class Cell:
         else: self.color = color
 
         self.isSelected = False
+
+    def __eq__(self, other):
+        if self.type == other.type and self.subType == other.subType: return True
+        else: return False
+
+    def __ne__(self, other):
+        if self.type == other.type and self.subType == other.subType: return False
+        else: return True
