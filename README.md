@@ -7,3 +7,6 @@ buttons 0/1/2/3/4/5/6/7 - summon units
 buttons f1/f2/f3/f4/f5 - summon building
 
 button U - lvlup, M - move, A - attack, Z - back, mouseRight - select cell 
+
+
+ТТТТТОТТТТТ
