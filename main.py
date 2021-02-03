@@ -1,18 +1,20 @@
-from field import Field
+from game import Game
+from player import Player
 
 import pygame
 
 
 
 if __name__ == '__main__':
-    field = Field((30, 30), 1, (1300, 1000))
-    field.generateMap()
+    game = Game((30, 30), 4, (1300, 1000))
+    game.generateMap()
 
     pygame.init()
-    screen = pygame.display.set_mode(field.winSize)
+    pygame.display.set_caption('ⒹⓊⓇⓀⒶ')
+    screen = pygame.display.set_mode(game.winSize)
 
     while True:
-        field.render(screen)
-        field.event() 
+        game.render(screen)
+        game.event() 
         pygame.display.flip()
     pygame.quit()

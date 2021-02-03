@@ -9,6 +9,9 @@ class Building:
 
         if subType == None: self.subType = 0
         else: self.subType = subType
+
+        if team == None: self.team = 0
+        else: self.team = team
     
     def __eq__(self, other):
         if self.type == other.type and self.subType == other.subType: return True
@@ -18,5 +21,6 @@ class Building:
         if self.type == other.type and self.subType == other.subType: return False
         else: return True
     
+    ''' увеличивает уровень здания '''
     def lvlUp(self):
         self.subType = min(self.subType + 1, 2)

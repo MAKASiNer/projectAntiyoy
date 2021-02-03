@@ -2,9 +2,9 @@ from type import Type
 
 
 
-# hp/dmg/mr/ar
+''' здоровье/урон/р.перемещения/р.атаки '''
 UNITPARAMETERS = [
-    # void
+    # void lvl  0/0/0
     [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
     # worker lvl 1
     [[0, 0, 1, 1], [0, 0, 1, 1], [0, 0, 1, 1]],
@@ -33,6 +33,9 @@ class Unit:
         if subType == None: self.subType = 0
         else: self.subType = subType
 
+        if team == None: self.team = 0
+        else: self.team = team
+
     def __eq__(self, other):
         if self.type == other.type and self.subType == other.subType: return True
         else: return False
@@ -41,18 +44,23 @@ class Unit:
         if self.type == other.type and self.subType == other.subType: return False
         else: return  True
 
+    ''' увеличивает уровень персонажа '''
     def lvlUp(self):
         self.subType = min(self.subType + 1, 2)
     
+    ''' возращает здоровье персонажа '''
     def health(self):
         return UNITPARAMETERS[self.type][self.subType][0]
 
+    ''' возращает урон персонажа '''
     def damage(self):
         return UNITPARAMETERS[self.type][self.subType][1]
     
+    ''' возращает радиус перемещения персонажа '''
     def moveRange(self):
         return UNITPARAMETERS[self.type][self.subType][2]
     
+    ''' возращает радиус атаки персонажа '''
     def attackRange(self):
         return UNITPARAMETERS[self.type][self.subType][3]
 
