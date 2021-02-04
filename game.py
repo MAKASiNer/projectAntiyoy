@@ -310,8 +310,8 @@ class Game:
         self.renderSelect(screen)
         self.renderMoveRange(screen)
         self.renderAttackRange(screen)
-        self.renderUnit(screen)
         self.renderBuilding(screen)
+        self.renderUnit(screen)
 
     def renderPlace(self, screen):
         # группа
@@ -420,8 +420,21 @@ class Game:
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
                 sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1])) 
+                # дорога
+                if self.building[x][y].type == Type().road:
+                    # матрица с ситуацией на поле 
+                    piece = [[False, False, False], [False, True, False], [False, False, False]]
+                    try:
+                        if self.building[x][y - 1].type == Type().road: piece[0][1] = True
+                        if self.building[x - 1][y].type == Type().road: piece[1][0] = True
+                        if self.building[x + 1][y].type == Type().road: piece[1][2] = True
+                        if self.building[x][y + 1].type == Type().road: piece[2][1] = True
+                    except: pass
+                    # принимаем тип дороги
+                    sprite.image = self.image[4][Building().indexOfRoadPiece(piece)]
+                    group.add(sprite)
                 # здания
-                if self.building[x][y].type != Type().void:
+                elif self.building[x][y].type != Type().void:
                     sprite.image = self.image[3][self.building[x][y].type - 1]
                     group.add(sprite)
         # отрисовка
@@ -503,13 +516,18 @@ class Game:
                 if event.key == pygame.K_7: 
                     self.unit[x][y] = Unit(Type().lancer)
                 #спавн зданий (временно)
-                if event.key == pygame.K_F1: self.building[x][y].type, self.building[x][y].subType = Type().plate, 0
-                if event.key == pygame.K_F2: self.building[x][y].type, self.building[x][y].subType = Type().barracks, 0
-                if event.key == pygame.K_F3: self.building[x][y].type, self.building[x][y].subType = Type().farm, 0
-                if event.key == pygame.K_F4: self.building[x][y].type, self.building[x][y].subType = Type().quarry, 0
-                if event.key == pygame.K_F5: self.building[x][y].type, self.building[x][y].subType = Type().sawmill, 0
-                # юниты уничтожают здания (временно)
-                if self.unit[x][y].type != Type().void: self.building[x][y] = Building()
+                if event.key == pygame.K_F1: 
+                    self.building[x][y] = Building(Type().plate)
+                if event.key == pygame.K_F2: 
+                    self.building[x][y] = Building(Type().barracks)
+                if event.key == pygame.K_F3: 
+                    self.building[x][y] = Building(Type().farm)
+                if event.key == pygame.K_F4: 
+                    self.building[x][y] = Building(Type().quarry)
+                if event.key == pygame.K_F5: 
+                    self.building[x][y] = Building(Type().sawmill)
+                if event.key == pygame.K_F6: 
+                    self.building[x][y] = Building(Type().road)
 
                 # поставить/убрать визуализацию селекта на клетку
                 if event.key == pygame.K_s: self.cell[x][y].isSelected = True
@@ -545,8 +563,11 @@ class Game:
                 # если ходим под себя, то не ходим
                 if From == To: return
 
+                # если ходим в воду, при этом на воде нет дороги
+                if self.cell[x1][y1].type == Type().void and self.building[x1][y1].type != Type().road: return
+
                 # если ходим на пустую клетку, то ходим
-                if self.unit[x1][y1].type == Type().void and self.building[x1][y1].type == Type().void:
+                if self.unit[x1][y1].type == Type().void and (self.building[x1][y1].type == Type().void or self.building[x1][y1].type == Type().road):
                     self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
                     self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
                     self.selectedPos = (x1, y1)

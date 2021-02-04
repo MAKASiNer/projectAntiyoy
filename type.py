@@ -21,6 +21,11 @@ class Type:
         self.environment =4
         self.select      =5
 
+        # тип земли
+        self.steppe      =1
+        self.forest      =2
+        self.mountain    =3
+
         # тип объекта-юнита
         self.worker      =1
         self.saber       =2
