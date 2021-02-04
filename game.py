@@ -103,7 +103,7 @@ class Game:
                 pygame.transform.scale(pygame.image.load("source/texture/building/farm.png"), self.plates_size),
                 pygame.transform.scale(pygame.image.load("source/texture/building/quarry.png"), self.plates_size),
                 pygame.transform.scale(pygame.image.load("source/texture/building/sawmill.png"), self.plates_size)
-            ]
+            ],
             # 4
             [
                 pygame.transform.scale(pygame.image.load("source/texture/building/road0.png"), self.plates_size),
@@ -121,7 +121,7 @@ class Game:
                 pygame.transform.scale(pygame.image.load("source/texture/building/road12.png"), self.plates_size),
                 pygame.transform.scale(pygame.image.load("source/texture/building/road13.png"), self.plates_size),
                 pygame.transform.scale(pygame.image.load("source/texture/building/road14.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road15.png"), self.plates_size)
+                pygame.transform.scale(pygame.image.load("source/texture/building/road12.png"), self.plates_size)
             ]
         ]
 
