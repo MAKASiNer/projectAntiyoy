@@ -37,6 +37,7 @@ class Type:
         self.farm        =3
         self.quarry      =4
         self.sawmill     =5
+        self.road        =6
 
         # тип обяекта-игрока
         self.redPlayer   =1

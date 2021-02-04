@@ -41,7 +41,7 @@ class Game:
 
         # размеры
         self.plates_size = (33, 33)       
-        # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж окружений   
+        # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж дорог
         self.image = [
             # 0
             [
@@ -104,6 +104,25 @@ class Game:
                 pygame.transform.scale(pygame.image.load("source/texture/building/quarry.png"), self.plates_size),
                 pygame.transform.scale(pygame.image.load("source/texture/building/sawmill.png"), self.plates_size)
             ]
+            # 4
+            [
+                pygame.transform.scale(pygame.image.load("source/texture/building/road0.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road1.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road2.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road3.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road4.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road5.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road6.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road7.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road8.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road9.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road10.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road11.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road12.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road13.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road14.png"), self.plates_size),
+                pygame.transform.scale(pygame.image.load("source/texture/building/road15.png"), self.plates_size)
+            ]
         ]
 
         # интерфейс
@@ -111,7 +130,8 @@ class Game:
         self.occupiedCell = pygame.transform.scale(pygame.image.load("source/interface/occupiedCell.png"), self.plates_size)
         self.freeCell = pygame.transform.scale(pygame.image.load("source/interface/freeCell.png"), self.plates_size)
         self.lefBg = pygame.transform.scale(pygame.image.load("source/interface/left_bg.png"), (300, 1000))
-    
+
+
     def generateMap(self, 
         seed=None, 
         peakCount=None, 
@@ -286,23 +306,34 @@ class Game:
         self.background = pygame.image.load("source/pattern/pattern_step_3.png")
 
     def render(self, screen):
-        group = pygame.sprite.Group()
+        self.renderPlace(screen)
+        self.renderSelect(screen)
+        self.renderMoveRange(screen)
+        self.renderAttackRange(screen)
+        self.renderUnit(screen)
+        self.renderBuilding(screen)
 
+    def renderPlace(self, screen):
+        # группа
+        group = pygame.sprite.Group()
         # интерфейс
         sprite = pygame.sprite.Sprite()
         sprite.rect = (self.winSize[0] - (self.size[0] * self.plates_size[0]), self.winSize[1] - (self.size[1] * self.plates_size[1]))
         sprite.rect = (self.size[0] * self.plates_size[0], 0)
         sprite.image = self.lefBg
         group.add(sprite)
-
         # бекграунд
         sprite = pygame.sprite.Sprite()
         sprite.rect = (0, 0)
         sprite.image = self.background
         group.add(sprite)
+        # отрисовка
+        group.draw(screen)
 
-
-        # отрисовка клеток поля
+    def renderSelect(self, screen):
+        # группа
+        group = pygame.sprite.Group()
+        # отрисовка селекта
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
@@ -311,15 +342,18 @@ class Game:
                 if self.cell[x][y].isSelected:
                     sprite.image = self.select
                     group.add(sprite)
+        # отрисовка
+        group.draw(screen)
 
+    def renderMoveRange(self, screen):
+        # группа
+        group = pygame.sprite.Group()
         # поле перемещения персонажа
         if 0 <= self.selectedPos[0] < self.size[0] and 0 <= self.selectedPos[1] < self.size[1]:
             x0 = self.selectedPos[0]
             y0 = self.selectedPos[1]
-
             if self.unit[x0][y0].type != Type().void:
                 if self.cell[x0][y0].isSelected:
-                    sprites = list()
                     # "радиус" зависит от персонажа
                     r = self.unit[x0][y0].moveRange()
                     # закрашиваем все клетки в "радиусе"
@@ -332,18 +366,20 @@ class Game:
                                 sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
                                 # если на клетке другой персонаж, ходить нельзя 
                                 sprite.image = self.freeCell
-                                sprites.append(sprite)
+                                group.add(sprite)
                             except: pass
-                    group.add(sprites)
+        # отрисовка
+        group.draw(screen)
 
+    def renderAttackRange(self, screen):
+        # группа
+        group = pygame.sprite.Group()
         # поле атаки персонажа
         if 0 <= self.selectedPos[0] < self.size[0] and 0 <= self.selectedPos[1] < self.size[1]:
             x0 = self.selectedPos[0]
             y0 = self.selectedPos[1]
-
             if self.unit[x0][y0].type != Type().void:
                 if self.cell[x0][y0].isSelected:
-                    sprites = list()
                     # "радиус" зависит от персонажа
                     r = self.unit[x0][y0].attackRange()
                     # закрашиваем все клетки в "радиусе"
@@ -356,27 +392,41 @@ class Game:
                                 sprite = pygame.sprite.Sprite()
                                 sprite.rect = (_x * self.plates_size[0], _y * self.plates_size[1])
                                 sprite.image =  self.occupiedCell
-                                sprites.append(sprite)
+                                group.add(sprite)
                             except: pass
-                    group.add(sprites)
-                
+        # отрисовка
+        group.draw(screen)
+
+    def renderUnit(self, screen):
+        # группа
+        group = pygame.sprite.Group()
+        # отрисовка окружения поля
+        for y in range(self.size[1]):
+            for x in range(self.size[0]):
+                sprite = pygame.sprite.Sprite()
+                sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1]))
+                # юниты
+                if self.unit[x][y].type != Type().void:
+                    sprite.image = self.image[2][self.unit[x][y].type - 1][self.unit[x][y].subType]
+                    group.add(sprite)
+        # отрисовка
+        group.draw(screen)
+
+    def renderBuilding(self, screen):
+        # группа
+        group = pygame.sprite.Group()
         # отрисовка окружения поля
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
                 sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1])) 
-
                 # здания
                 if self.building[x][y].type != Type().void:
                     sprite.image = self.image[3][self.building[x][y].type - 1]
                     group.add(sprite)
-
-                # юниты
-                if self.unit[x][y].type != Type().void:
-                    sprite.image = self.image[2][self.unit[x][y].type - 1][self.unit[x][y].subType]
-                    group.add(sprite)
-
+        # отрисовка
         group.draw(screen)
+
 
     def event(self):
         for event in pygame.event.get():
