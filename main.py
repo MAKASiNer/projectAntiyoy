@@ -7,7 +7,9 @@ import pygame
 
 if __name__ == '__main__':
     game = Game((30, 30), 1, (1300, 1000))
-    game.generateMap()
+    game.generateMapV2()
+    #game.generateMap()
+    
 
     pygame.init()
     pygame.display.set_caption('ⒹⓊⓇⓀⒶ')

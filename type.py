@@ -22,10 +22,10 @@ class Type:
         self.select      =5
 
         # тип земли
-        self.steppe      =1
-        self.forest      =2
-        self.mountain    =3
-
+        self.steppe      =0
+        self.forest      =1
+        self.mountain    =2
+        
         # тип объекта-юнита
         self.worker      =1
         self.saber       =2

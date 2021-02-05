@@ -306,59 +306,62 @@ class Game:
         self.background = pygame.image.load("source/pattern/pattern_step_3.png")
 
     def generateMapV2(self):
-        seedCount = 55
-        coord = list()
-        
-        image = Image.new("RGBA", (300, 300), (255, 255, 255))
+
+        # изображение
+        image = Image.new("RGBA", (self.size[0], self.size[1]), (255, 255, 255))
         pattern = ImageDraw.Draw(image)
         pixel = image.load()
-        
-        for _ in range(seedCount):
-            x = random.randint(50, 249)
-            y = random.randint(50, 249)
-            clr = (
-                random.randint(50, 200),
-                random.randint(50, 200),
-                random.randint(50, 200)
-            )
-            r = 2
-            
-            pattern.ellipse((x - r, y - r, x + r, y + r), clr)
-            coord.append([(x, y), r, clr])
-        
-        while len(coord) > 0:
-            
-            popList = list()
-            
-            for i in range(len(coord)):
-                coord[i][1] = int(coord[i][1] + 1)
-                
-                x0 = coord[i][0][0]
-                y0 = coord[i][0][1]
-                r = coord[i][1]
-                clr = coord[i][2]
-                
-                change = False
 
-                for y in range(-coord[i][1], coord[i][1] + 1):
-                    for x in range(-coord[i][1], coord[i][1] + 1):
-                        try:
-                            if y * y + x * x <= r * r:
-                                if pixel[x0 + x, y0 + y][0] == 255 and pixel[x0 + x, y0 + y][1] == 255 and pixel[x0 + x, y0 + y][2] == 255:
-                                    change = True
-                                    pixel[x0 + x, y0 + y] = copy.deepcopy(clr)
-                        except: pass
-                
-                if not change: popList.append(i)
-                
-            num = 0
-            for i in popList:
-                coord.pop(i - num)
-                num += 1
-            print(len(coord))
+        # количество островов
+        islandCount = random.randint(1, 4)
         
-        image.save("source/pattern/step1.png")
+        for _ in range(islandCount):
+            # центр острова
+            center = (
+                random.randint(0, self.size[0] - 1),
+                random.randint(0, self.size[1] - 1)
+            )
+
+            # количество изломов границы острова
+            vertexCount = random.randint(3, 12)
+
+            # лист вершин изломов
+            vertexList = list()
+
+            # высчитываем вершины
+            for angle in range(0, 360, int(360 / vertexCount)):
+                l = random.randint(1, int(self.size[0] / 2))
+                x = center[0] + math.cos(angle * math.pi / 180) * l
+                y = center[1] + math.sin(angle * math.pi / 180) * l
+                vertexList.append((x, y))
+            pattern.polygon(vertexList, fill=(0, 0, 0))
+
         
+        image.save("source\pattern\pattern0.png")
+
+        # переносим изменения на поле
+        for x in range(0, self.size[0]):
+            for y in range(0, self.size[1]):
+                if pixel[x, y][0] == 0: self.cell[x][y] = Cell(Type().ground, Type().forest)
+                elif pixel[x, y][0] == 255: self.cell[x][y] = Cell(Type().void)
+        
+        self.createBg()
+
+    def createBg(self):
+        image = Image.new("RGBA", (self.plates_size[0] * self.size[0] - 1, self.plates_size[1] * self.size[1] - 1), (255, 255, 255))
+        pixel = image.load()
+
+        for x in range(0, self.size[0]):
+            for y in range(0, self.size[1]):
+                cell_l = self.cell[x][y]
+                for _x in range(x * self.plates_size[0], min((x + 1) * self.plates_size[0], image.size[0])):
+                    for _y in range(y * self.plates_size[1], min((y + 1) * self.plates_size[1], image.size[1])):
+                        clr = self.image[cell_l.type][cell_l.subType].get_at((_x % self.plates_size[0], _y % self.plates_size[1]))
+                        pixel[_x, _y] = (clr[0], clr[1], clr[2], clr[3])
+
+        image.save("source/pattern/bg.png")
+        self.background = pygame.image.load("source/pattern/bg.png")
+
 
 
     def render(self, screen):
@@ -487,7 +490,7 @@ class Game:
                         if self.building[x][y + 1].type == Type().road: piece[2][1] = True
                     except: pass
                     # принимаем тип дороги
-                    sprite.image = self.image[4][self.building[x][y].indexOfRoadPiece(piece)]
+                    sprite.image = self.image[4][Building().indexOfRoadPiece(piece)]
                     group.add(sprite)
                 # здания
                 elif self.building[x][y].type != Type().void:
