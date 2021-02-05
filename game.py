@@ -305,6 +305,62 @@ class Game:
         image.save("source/pattern/pattern_step_3.png")
         self.background = pygame.image.load("source/pattern/pattern_step_3.png")
 
+    def generateMapV2(self):
+        seedCount = 55
+        coord = list()
+        
+        image = Image.new("RGBA", (300, 300), (255, 255, 255))
+        pattern = ImageDraw.Draw(image)
+        pixel = image.load()
+        
+        for _ in range(seedCount):
+            x = random.randint(50, 249)
+            y = random.randint(50, 249)
+            clr = (
+                random.randint(50, 200),
+                random.randint(50, 200),
+                random.randint(50, 200)
+            )
+            r = 2
+            
+            pattern.ellipse((x - r, y - r, x + r, y + r), clr)
+            coord.append([(x, y), r, clr])
+        
+        while len(coord) > 0:
+            
+            popList = list()
+            
+            for i in range(len(coord)):
+                coord[i][1] = int(coord[i][1] + 1)
+                
+                x0 = coord[i][0][0]
+                y0 = coord[i][0][1]
+                r = coord[i][1]
+                clr = coord[i][2]
+                
+                change = False
+
+                for y in range(-coord[i][1], coord[i][1] + 1):
+                    for x in range(-coord[i][1], coord[i][1] + 1):
+                        try:
+                            if y * y + x * x <= r * r:
+                                if pixel[x0 + x, y0 + y][0] == 255 and pixel[x0 + x, y0 + y][1] == 255 and pixel[x0 + x, y0 + y][2] == 255:
+                                    change = True
+                                    pixel[x0 + x, y0 + y] = copy.deepcopy(clr)
+                        except: pass
+                
+                if not change: popList.append(i)
+                
+            num = 0
+            for i in popList:
+                coord.pop(i - num)
+                num += 1
+            print(len(coord))
+        
+        image.save("source/pattern/step1.png")
+        
+
+
     def render(self, screen):
         self.renderPlace(screen)
         self.renderSelect(screen)
