@@ -431,7 +431,7 @@ class Game:
                         if self.building[x][y + 1].type == Type().road: piece[2][1] = True
                     except: pass
                     # принимаем тип дороги
-                    sprite.image = self.image[4][Building().indexOfRoadPiece(piece)]
+                    sprite.image = self.image[4][self.building[x][y].indexOfRoadPiece(piece)]
                     group.add(sprite)
                 # здания
                 elif self.building[x][y].type != Type().void:
