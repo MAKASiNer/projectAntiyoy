@@ -132,7 +132,7 @@ class Game:
         self.lefBg = pygame.transform.scale(pygame.image.load("source/interface/left_bg.png"), (300, 1000))
 
 
-    def generateMap(self, 
+    def generateMapV1(self, 
         seed=None, 
         peakCount=None, 
         peakRadius=None, 
@@ -305,37 +305,65 @@ class Game:
         image.save("source/pattern/pattern_step_3.png")
         self.background = pygame.image.load("source/pattern/pattern_step_3.png")
 
-    def generateMapV2(self):
+    def generateMapV2(self):  
+        islandCount = random.randint(2, 5)                      # количество островов
+        islandLenVariation = int(self.size[0] / 2)              # модуль колебания радиусов островов
+        steppeLenVariation = int(self.size[0] / 3)              # модуль колебания радиусов гор 
+        mountainLenVariation = int(self.size[0] / 4)            # модуль колебания радиусов гор 
+        center = (int(self.size[0] / 2), int(self.size[1] / 2)) # карты
 
         # изображение
         image = Image.new("RGBA", (self.size[0], self.size[1]), (255, 255, 255))
         pattern = ImageDraw.Draw(image)
         pixel = image.load()
 
-        # количество островов
-        islandCount = random.randint(1, 4)
-        
-        for _ in range(islandCount):
-            # центр острова
-            center = (
-                random.randint(0, self.size[0] - 1),
-                random.randint(0, self.size[1] - 1)
-            )
+        # центр карты - бариценр от барицентров всех островов
+        # рандомно раскидываем точки, а последнюю вычисляем таким образом, чтоб бариценр от барицентров был в центре карты
+        barycenterList = list()
+        for _ in range(islandCount - 1):
+            x0 = center[0] + random.randint(-int(self.size[0] / 4), +int(self.size[0] / 4))
+            y0 = center[1] + random.randint(-int(self.size[1] / 4), +int(self.size[1] / 4) )
+            barycenterList.append((x0, y0))
+        x0 = center[0] * (islandCount) - sum([a[0] for a in barycenterList])
+        y0 = center[0] * (islandCount) - sum([a[0] for a in barycenterList])
+        barycenterList.append((x0, y0))
 
-            # количество изломов границы острова
-            vertexCount = random.randint(3, 12)
+        # каджый барицентер - центр острова
+        for barycenter in barycenterList:
+            islandVertexCount = random.randint(3, 12)   # количество изломов границы острова
+            steppeVertexCount = random.randint(3, 9)    # количество изломов границы степей
+            mountainVertexCount = random.randint(3, 7)  # количество изломов границы гор
+            vertexList = list()                 # лист вершин изломов
 
-            # лист вершин изломов
-            vertexList = list()
-
-            # высчитываем вершины
-            for angle in range(0, 360, int(360 / vertexCount)):
-                l = random.randint(1, int(self.size[0] / 2))
-                x = center[0] + math.cos(angle * math.pi / 180) * l
-                y = center[1] + math.sin(angle * math.pi / 180) * l
-                vertexList.append((x, y))
+            # высчитываем вершины острова
+            vertexList.clear()
+            for angle in range(0, 360, int(360 / islandVertexCount)):
+                l = random.randint(1, islandLenVariation)
+                x = max(barycenter[0] + math.cos(angle * math.pi / 180) * l, 0)
+                y = max(barycenter[1] + math.sin(angle * math.pi / 180) * l, 0)
+                vertexList.append((min(x, self.size[0] - 1), min(y, self.size[1] - 1)))
+            # рисуем остров    
             pattern.polygon(vertexList, fill=(0, 0, 0))
 
+            # высчитываем вершины степей
+            vertexList.clear()
+            for angle in range(0, 360, int(360 / steppeVertexCount)):
+                l = random.randint(1, steppeLenVariation)
+                x = max(barycenter[0] + math.cos(angle * math.pi / 180) * l, 0)
+                y = max(barycenter[1] + math.sin(angle * math.pi / 180) * l, 0)
+                vertexList.append((min(x, self.size[0] - 1), min(y, self.size[1] - 1)))
+            # рисуем степи   
+            pattern.polygon(vertexList, fill=(50, 50, 50))
+          
+            # высчитываем вершины гор
+            vertexList.clear()
+            for angle in range(0, 360, int(360 / mountainVertexCount)):
+                l = random.randint(1, mountainLenVariation)
+                x = max(barycenter[0] + math.cos(angle * math.pi / 180) * l, 0)
+                y = max(barycenter[1] + math.sin(angle * math.pi / 180) * l, 0)
+                vertexList.append((min(x, self.size[0] - 1), min(y, self.size[1] - 1)))
+            # рисуем горы         
+            pattern.polygon(vertexList, fill=(100, 100, 100)) 
         
         image.save("source\pattern\pattern0.png")
 
@@ -343,6 +371,8 @@ class Game:
         for x in range(0, self.size[0]):
             for y in range(0, self.size[1]):
                 if pixel[x, y][0] == 0: self.cell[x][y] = Cell(Type().ground, Type().forest)
+                if pixel[x, y][0] == 50: self.cell[x][y] = Cell(Type().ground, Type().steppe)
+                if pixel[x, y][0] == 100: self.cell[x][y] = Cell(Type().ground, Type().mountain)
                 elif pixel[x, y][0] == 255: self.cell[x][y] = Cell(Type().void)
         
         self.createBg()
@@ -361,7 +391,6 @@ class Game:
 
         image.save("source/pattern/bg.png")
         self.background = pygame.image.load("source/pattern/bg.png")
-
 
 
     def render(self, screen):
