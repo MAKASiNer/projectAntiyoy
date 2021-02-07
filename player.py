@@ -10,13 +10,13 @@ class Player:
         if count == None: self.count = 1
         else: self.count = count
 
-        self.thisPlayer = 1
+        self.thisPl = 1
 
     ''' меняет игрока на следующего'''
     def nextPlaeyr(self):
-        self.thisPlayer = self.thisPlayer % self.count + 1
-        return self.thisPlayer
+        self.thisPl = self.thisPl % self.count + 1
+        return self.thisPl
     
     ''' возращает текущего игрока'''
     def thisPlayer(self):
-        return self.thisPlayer
+        return self.thisPl

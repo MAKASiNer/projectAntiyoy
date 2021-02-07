@@ -4,6 +4,7 @@ from unit import Unit
 from type import Type
 from building import Building
 from player import Player
+from loader import IMAGE, PLATES_SIZE
 
 import copy
 import math
@@ -40,90 +41,9 @@ class Game:
         ]
 
         # размеры
-        self.plates_size = (33, 33)       
+        self.plates_size = PLATES_SIZE     
         # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж дорог
-        self.image = [
-            # 0
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/void.png"), self.plates_size)
-            ], 
-            # 1
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/ground/steppe.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/ground/forest.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/ground/mountain.png"), self.plates_size),
-            ],
-            # 2
-            [
-                [
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/worker0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/worker1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/worker2.png"), self.plates_size)
-                ],
-                [
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/saber0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/saber1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/saber2.png"), self.plates_size)
-                ],
-                [
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/assassin1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/assassin2.png"), self.plates_size)
-                ],
-                [
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/berserker0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/berserker1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/berserker2.png"), self.plates_size)
-                ],
-                [
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/archer0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/archer1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/archer2.png"), self.plates_size)
-                ],
-                [
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/caster0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/caster1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/caster2.png"), self.plates_size)
-                ],
-                [
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/rider0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/rider1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/rider2.png"), self.plates_size)
-                ],
-                [
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), self.plates_size),
-                    pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), self.plates_size)
-                ]
-            ],
-            # 3
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill.png"), self.plates_size)
-            ],
-            # 4
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/road0.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road1.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road2.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road3.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road4.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road5.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road6.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road7.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road8.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road9.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road10.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road11.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road12.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road13.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road14.png"), self.plates_size),
-                pygame.transform.scale(pygame.image.load("source/texture/building/road15.png"), self.plates_size)
-            ]
-        ]
+        self.image = IMAGE
 
         # интерфейс
         self.select = pygame.transform.scale(pygame.image.load("source/interface/select.png"), self.plates_size)
@@ -495,7 +415,7 @@ class Game:
                 sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1]))
                 # юниты
                 if self.unit[x][y].type != Type().void:
-                    sprite.image = self.image[2][self.unit[x][y].type - 1][self.unit[x][y].subType]
+                    sprite.image = self.image[2][self.unit[x][y].team - 1][self.unit[x][y].type - 1][self.unit[x][y].subType]
                     group.add(sprite)
         # отрисовка
         group.draw(screen)
@@ -555,10 +475,12 @@ class Game:
                     \n\tcell:\
                     \n\t\ttype:\t\t{}\
                     \n\t\tsubType:\t{}\
+                    \n\t\tteam:\t\t{}\
                     \n\t\tselect:\t\t{}\
                     \n\tunit:\
                     \n\t\ttype:\t\t{}\
                     \n\t\tsubType:\t{}\
+                    \n\t\tteam:\t\t{}\
                     \n\t\thealth:\t\t{}\
                     \n\t\tdamage:\t\t{}\
                     \n\t\tmoveRange:\t{}\
@@ -566,19 +488,23 @@ class Game:
                     \n\tbuilding:\
                     \n\t\ttype:\t\t{}\
                     \n\t\tsubType:\t{}\
+                    \n\t\tteam:\t\t{}\
                     \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".format(
                         self.selectedPos,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
+                        self.cell[self.selectedPos[0]][self.selectedPos[1]].team,
                         self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected,
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].type,
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].subType,
+                        self.unit[self.selectedPos[0]][self.selectedPos[1]].team,
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].health(),
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].damage(),
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange(),
                         self.unit[self.selectedPos[0]][self.selectedPos[1]].attackRange(),
                         self.building[self.selectedPos[0]][self.selectedPos[1]].type,
-                        self.building[self.selectedPos[0]][self.selectedPos[1]].subType)
+                        self.building[self.selectedPos[0]][self.selectedPos[1]].subType,
+                        self.building[self.selectedPos[0]][self.selectedPos[1]].team)
                     print(text)
 
             if event.type == pygame.KEYDOWN:
@@ -588,34 +514,34 @@ class Game:
 
                 # спавн персонажей (временно)
                 if event.key == pygame.K_0: 
-                    self.unit[x][y] = Unit(Type().worker)
+                    self.unit[x][y] = Unit(Type().worker, 0, self.player.thisPlayer())
                 if event.key == pygame.K_1: 
-                    self.unit[x][y] = Unit(Type().saber)
+                    self.unit[x][y] = Unit(Type().saber, 0, self.player.thisPlayer())
                 if event.key == pygame.K_2: 
-                    self.unit[x][y] = Unit(Type().assassin)
+                    self.unit[x][y] = Unit(Type().assassin, 0, self.player.thisPlayer())
                 if event.key == pygame.K_3: 
-                    self.unit[x][y] = Unit(Type().berserker)
+                    self.unit[x][y] = Unit(Type().berserker, 0, self.player.thisPlayer())
                 if event.key == pygame.K_4: 
-                    self.unit[x][y] = Unit(Type().archer)
+                    self.unit[x][y] = Unit(Type().archer, 0, self.player.thisPlayer())
                 if event.key == pygame.K_5: 
-                    self.unit[x][y] = Unit(Type().caster)
+                    self.unit[x][y] = Unit(Type().caster, 0, self.player.thisPlayer())
                 if event.key == pygame.K_6: 
-                    self.unit[x][y] = Unit(Type().rider)
+                    self.unit[x][y] = Unit(Type().rider, 0, self.player.thisPlayer())
                 if event.key == pygame.K_7: 
-                    self.unit[x][y] = Unit(Type().lancer)
+                    self.unit[x][y] = Unit(Type().lancer, 0, self.player.thisPlayer())
                 #спавн зданий (временно)
                 if event.key == pygame.K_F1: 
-                    self.building[x][y] = Building(Type().plate)
+                    self.building[x][y] = Building(Type().plate, 0, self.player.thisPlayer())
                 if event.key == pygame.K_F2: 
-                    self.building[x][y] = Building(Type().barracks)
+                    self.building[x][y] = Building(Type().barracks, 0, self.player.thisPlayer())
                 if event.key == pygame.K_F3: 
-                    self.building[x][y] = Building(Type().farm)
+                    self.building[x][y] = Building(Type().farm, 0, self.player.thisPlayer())
                 if event.key == pygame.K_F4: 
-                    self.building[x][y] = Building(Type().quarry)
+                    self.building[x][y] = Building(Type().quarry, 0, self.player.thisPlayer())
                 if event.key == pygame.K_F5: 
-                    self.building[x][y] = Building(Type().sawmill)
+                    self.building[x][y] = Building(Type().sawmill, 0, self.player.thisPlayer())
                 if event.key == pygame.K_F6: 
-                    self.building[x][y] = Building(Type().road)
+                    self.building[x][y] = Building(Type().road, 0, self.player.thisPlayer())
 
                 # поставить/убрать визуализацию селекта на клетку
                 if event.key == pygame.K_s: self.cell[x][y].isSelected = True
@@ -623,9 +549,12 @@ class Game:
 
                 # лвлапп
                 if event.key == pygame.K_u:
-                    if self.selectedPos[0] < self.size[0] and self.selectedPos[1] < self.size[1]:
-                        if self.unit[x][y].type != Type().void: self.unit[self.selectedPos[0]][self.selectedPos[1]].lvlUp()
-                        if self.building[x][y].type != Type().void: self.building[self.selectedPos[0]][self.selectedPos[1]].lvlUp()
+                    x = self.selectedPos[0]
+                    y = self.selectedPos[1]
+
+                    if x < self.size[0] and y < self.size[1]:
+                        if self.unit[x][y].type != Type().void: self.unit[x][y].lvlUp()
+                        elif self.building[x][y].type != Type().void: self.building[x][y].lvlUp()
                 
                 # переместить
                 if event.key == pygame.K_m: self.moveUnit(self.selectedPos, self.mousePos)
