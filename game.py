@@ -613,8 +613,11 @@ class Game:
                     elif self.unit[x0][y0].health() > self.unit[x1][y1].damage(): return
                     else: win = False
 
-                    # милишники занимают клетку атакуемого
-                    if self.unit[x0][y0].attackRange() == 1:
+                    # милишники занимают клетку атакуемого, за искючением башен, башни - далникик с ранжем атаки 1
+                    if self.unit[x0][y0].type == Type().tower or self.unit[x0][y0].attackRange() > 1:
+                        if win:
+                            self.unit[x1][y1] = Unit()
+                    else:
                         if win:
                             self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
                             self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
@@ -622,11 +625,6 @@ class Game:
                         else:
                             self.cell[x0][y0].isSelected = False
                             self.unit[x0][y0] = Unit()
-
-                    # дальники просто убивают
-                    else:
-                        if win:
-                            self.unit[x1][y1] = Unit()
                 
                 # если атакуем постройку
                 if self.building[x1][y1].type != Type().void:
@@ -684,3 +682,15 @@ class Game:
             self.unit = element[1]
             self.building = element[2]
             self.selectedPos = element[3]
+
+
+    def logic(self):
+        # башни бьют всех не своих в радиусе атаки
+        for y in range(self.size[1]):
+            for x in range(self.size[0]):
+                if self.unit[x][y].type == Type().tower:
+                    # проходжим по радиусу атаки
+                    r = self.unit[x][y].attackRange()
+                    for _y in range(y - r, y + r + 1):
+                        for _x in range(x - r, x + r + 1):
+                            self.attackUnit((x, y), (_x, _y))
