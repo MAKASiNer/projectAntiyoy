@@ -35,6 +35,7 @@ class Type:
         self.caster      =6
         self.rider       =7
         self.lancer      =8
+        self.tower       =9
 
         # тип объекта-здания
         self.plate       =1

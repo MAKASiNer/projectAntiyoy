@@ -5,7 +5,7 @@ from type import Type
 ''' здоровье/урон/р.перемещения/р.атаки '''
 UNITPARAMETERS = [
     # void lvl  0/0/0
-    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+    [[0, 0, 0, 0]],
     # worker lvl 1
     [[0, 0, 1, 1], [0, 0, 1, 1], [0, 0, 1, 1]],
     # saber lvl 1/2/3
@@ -21,7 +21,9 @@ UNITPARAMETERS = [
     # rider lvl 1/2/3
     [[1, 1, 2, 1], [2, 2, 2, 1], [3, 3, 2, 1]],
     # lanser lvl 1/2/3
-    [[1, 1, 1, 2], [2, 2, 1, 2], [3, 3, 1, 2]]
+    [[1, 1, 1, 2], [2, 2, 1, 2], [3, 3, 1, 2]],
+    # tower lvl 1/2/3/4
+    [[1, 1, 0, 1], [2, 2, 0, 1], [3, 3, 0, 1], [4, 4, 0, 1]]
 ]
 
 
@@ -46,7 +48,7 @@ class Unit:
 
     ''' увеличивает уровень персонажа '''
     def lvlUp(self):
-        self.subType = min(self.subType + 1, 2)
+        self.subType = min(self.subType + 1, len(UNITPARAMETERS[self.type]) - 1)
     
     ''' возращает здоровье персонажа '''
     def health(self):

@@ -529,6 +529,8 @@ class Game:
                     self.unit[x][y] = Unit(Type().rider, 0, self.player.thisPlayer())
                 if event.key == pygame.K_7: 
                     self.unit[x][y] = Unit(Type().lancer, 0, self.player.thisPlayer())
+                if event.key == pygame.K_8: 
+                    self.unit[x][y] = Unit(Type().tower, 0, self.player.thisPlayer())
                 #спавн зданий (временно)
                 if event.key == pygame.K_F1: 
                     self.building[x][y] = Building(Type().plate, 0, self.player.thisPlayer())
@@ -599,6 +601,8 @@ class Game:
                 if abs(x1 - x0) > self.unit[x0][y0].attackRange() or abs(y1 - y0) > self.unit[x0][y0].attackRange(): return
                 # самовыпил - не варик
                 if From == To: return
+                # своих не бьем
+                if self.unit[x0][y0].team == self.unit[x1][y1].team: return
 
                 # если юнита
                 if self.unit[x1][y1].type != Type().void:

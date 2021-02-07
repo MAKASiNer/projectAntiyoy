@@ -24,9 +24,9 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/worker_lvl3_pl1.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl1_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl2_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl3_pl1.png"), PLATES_SIZE)
             ],
             [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), PLATES_SIZE),
@@ -57,6 +57,12 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), PLATES_SIZE),
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), PLATES_SIZE),
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), PLATES_SIZE)
+            ],
+            [
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl1_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl2_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl3_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl4_pl1.png"), PLATES_SIZE)
             ]
         ],
         # player 2
@@ -67,9 +73,9 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/worker_lvl3_pl2.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl1_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl2_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl3_pl2.png"), PLATES_SIZE)
             ],
             [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), PLATES_SIZE),
@@ -100,6 +106,12 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), PLATES_SIZE),
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), PLATES_SIZE),
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), PLATES_SIZE)
+            ],
+            [
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl1_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl2_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl3_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl4_pl2.png"), PLATES_SIZE)
             ]
         ],
         # player 3
@@ -110,9 +122,9 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/worker_lvl3_pl3.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl1_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl2_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl3_pl3.png"), PLATES_SIZE)
             ],
             [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), PLATES_SIZE),
@@ -143,6 +155,12 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), PLATES_SIZE),
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), PLATES_SIZE),
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), PLATES_SIZE)
+            ],
+            [
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl1_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl2_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl3_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl4_pl3.png"), PLATES_SIZE)
             ]
         ],
         # player 4
@@ -153,9 +171,9 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/worker_lvl3_pl4.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/saber2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl1_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl2_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl3_pl4.png"), PLATES_SIZE)
             ],
             [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), PLATES_SIZE),
@@ -186,6 +204,12 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), PLATES_SIZE),
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), PLATES_SIZE),
                 pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), PLATES_SIZE)
+            ],
+            [
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl1_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl2_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl3_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl4_pl4.png"), PLATES_SIZE)
             ]
         ]
     ],
