@@ -29,34 +29,34 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl3_pl1.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl1_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl2_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl3_pl1.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl1_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl2_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl3_pl1.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl1_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl2_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl3_pl1.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl1_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl2_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl3_pl1.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl1_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl2_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl3_pl1.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl1_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl2_pl1.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl3_pl1.png"), PLATES_SIZE)
             ],
             [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl1_pl1.png"), PLATES_SIZE),
@@ -78,34 +78,34 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl3_pl2.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl1_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl2_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl3_pl2.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl1_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl2_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl3_pl2.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl1_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl2_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl3_pl2.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl1_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl2_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl3_pl2.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl1_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl2_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl3_pl2.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl1_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl2_pl2.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl3_pl2.png"), PLATES_SIZE)
             ],
             [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl1_pl2.png"), PLATES_SIZE),
@@ -127,34 +127,34 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl3_pl3.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl1_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl2_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl3_pl3.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl1_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl2_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl3_pl3.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl1_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl2_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl3_pl3.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl1_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl2_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl3_pl3.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl1_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl2_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl3_pl3.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl1_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl2_pl3.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl3_pl3.png"), PLATES_SIZE)
             ],
             [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl1_pl3.png"), PLATES_SIZE),
@@ -176,34 +176,34 @@ IMAGE = [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/saber_lvl3_pl4.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl1_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl2_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/assassin_lvl3_pl4.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl1_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl2_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/berserker_lvl3_pl4.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/archer2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl1_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl2_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/archer_lvl3_pl4.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/caster2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl1_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl2_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/caster_lvl3_pl4.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/rider2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl1_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl2_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/rider_lvl3_pl4.png"), PLATES_SIZE)
             ],
             [
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer0.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer2.png"), PLATES_SIZE)
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl1_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl2_pl4.png"), PLATES_SIZE),
+                pygame.transform.scale(pygame.image.load("source/texture/unit/lancer_lvl3_pl4.png"), PLATES_SIZE)
             ],
             [
                 pygame.transform.scale(pygame.image.load("source/texture/unit/tower_lvl1_pl4.png"), PLATES_SIZE),

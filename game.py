@@ -49,7 +49,6 @@ class Game:
         self.select = pygame.transform.scale(pygame.image.load("source/interface/select.png"), self.plates_size)
         self.occupiedCell = pygame.transform.scale(pygame.image.load("source/interface/occupiedCell.png"), self.plates_size)
         self.freeCell = pygame.transform.scale(pygame.image.load("source/interface/freeCell.png"), self.plates_size)
-        self.lefBg = pygame.transform.scale(pygame.image.load("source/interface/left_bg.png"), (300, 1000))
 
 
     def generateMapV1(self, 
@@ -298,7 +297,7 @@ class Game:
         self.createBg()
 
     def createBg(self):
-        image = Image.new("RGBA", (self.plates_size[0] * self.size[0] - 1, self.plates_size[1] * self.size[1] - 1), (255, 255, 255))
+        image = Image.new("RGBA", (self.plates_size[0] * self.size[0], self.plates_size[1] * self.size[1]), (255, 255, 255))
         pixel = image.load()
 
         for x in range(0, self.size[0]):
@@ -324,12 +323,72 @@ class Game:
     def renderPlace(self, screen):
         # группа
         group = pygame.sprite.Group()
+
         # интерфейс
-        sprite = pygame.sprite.Sprite()
-        sprite.rect = (self.winSize[0] - (self.size[0] * self.plates_size[0]), self.winSize[1] - (self.size[1] * self.plates_size[1]))
-        sprite.rect = (self.size[0] * self.plates_size[0], 0)
-        sprite.image = self.lefBg
-        group.add(sprite)
+        screen.fill((255, 255, 255))
+        # левая рамка
+        pygame.draw.rect(screen, (0, 0, 0), (
+            self.size[0] * self.plates_size[0], 0, 
+            self.plates_size[0], self.size[1] * self.plates_size[1]
+        ))
+        # правая рамка
+        pygame.draw.rect(screen, (0, 0, 0), (
+            self.winSize[0] - self.plates_size[0], 0, 
+            self.plates_size[0], self.size[1] * self.plates_size[1]
+        ))
+        # верхняя 
+        pygame.draw.rect(screen, (0, 0, 0), (
+            self.size[0] * self.plates_size[0], 0, 
+            self.winSize[0] - self.size[0] * self.plates_size[0], self.plates_size[1]
+        ))
+        # нижная
+        pygame.draw.rect(screen, (0, 0, 0), (
+            self.size[0] * self.plates_size[0], self.winSize[1] - self.plates_size[1], 
+            self.winSize[0] - self.size[0] * self.plates_size[0], self.size[1] * self.plates_size[1]
+        ))
+
+        # текст с инфой о клетке
+        cellInfo_text = 'cell:         [type: {}, subType: {}, team: {}]'.format(
+                self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
+                self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
+                self.cell[self.selectedPos[0]][self.selectedPos[1]].team
+            )
+
+        cellInfo_font = pygame.font.Font("source/font/font1.fon", 10)
+        cellInfo = cellInfo_font.render(cellInfo_text, True, (0, 0, 0))
+        screen.blit(cellInfo, (
+            (self.size[0] + 2) * self.plates_size[0], 
+            2 * self.plates_size[1]
+        ))
+
+        # текст с инфой о юните
+        unitInfo_text = 'unit:         [type: {}, subType: {}, team: {}]'.format(
+                self.unit[self.selectedPos[0]][self.selectedPos[1]].type,
+                self.unit[self.selectedPos[0]][self.selectedPos[1]].subType,
+                self.unit[self.selectedPos[0]][self.selectedPos[1]].team
+            )
+
+        unitInfo_font = pygame.font.Font("source/font/font1.fon", 10)
+        unitInfo = unitInfo_font.render(unitInfo_text, True, (0, 0, 0))
+        screen.blit(unitInfo, (
+            (self.size[0] + 2) * self.plates_size[0], 
+            3 * self.plates_size[1]
+        ))
+
+        # текст с инфой о строение
+        buildingInfo_text = 'building: [type: {}, subType: {}, team: {}]'.format(
+                self.building[self.selectedPos[0]][self.selectedPos[1]].type,
+                self.building[self.selectedPos[0]][self.selectedPos[1]].subType,
+                self.building[self.selectedPos[0]][self.selectedPos[1]].team
+            )
+
+        buildingInfo_font = pygame.font.Font("source/font/font1.fon", 10)
+        buildingInfo = buildingInfo_font.render(buildingInfo_text, True, (0, 0, 0))
+        screen.blit(buildingInfo, (
+            (self.size[0] + 2) * self.plates_size[0], 
+            4 * self.plates_size[1]
+        ))
+
         # бекграунд
         sprite = pygame.sprite.Sprite()
         sprite.rect = (0, 0)
@@ -693,4 +752,6 @@ class Game:
                     r = self.unit[x][y].attackRange()
                     for _y in range(y - r, y + r + 1):
                         for _x in range(x - r, x + r + 1):
-                            self.attackUnit((x, y), (_x, _y))
+                            # башня башне башня
+                            if self.unit[_x][_y].type != Type().tower:
+                                self.attackUnit((x, y), (_x, _y))
