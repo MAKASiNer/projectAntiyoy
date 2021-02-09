@@ -31,14 +31,7 @@ class Game:
         self.building = [[Building() for _ in range(size[1])] for _ in range(size[0])]
 
         # буффер ходов
-        self.stepBuffer = [
-            [
-                copy.deepcopy(self.cell),
-                copy.deepcopy(self.unit),
-                copy.deepcopy(self.building),
-                copy.deepcopy(self.selectedPos)
-            ]
-        ]
+        self.stepBuffer = list()
 
         # размеры
         self.plates_size = PLATES_SIZE     
@@ -311,6 +304,15 @@ class Game:
         image.save("source/pattern/bg.png")
         self.background = pygame.image.load("source/pattern/bg.png")
 
+        self.stepBuffer = [
+            [
+                copy.deepcopy(self.cell),
+                copy.deepcopy(self.unit),
+                copy.deepcopy(self.building),
+                copy.deepcopy(self.selectedPos)
+            ]
+        ]
+
 
     def render(self, screen):
         self.renderPlace(screen)
@@ -502,7 +504,7 @@ class Game:
                     group.add(sprite)
                 # здания
                 elif self.building[x][y].type != Type().void:
-                    sprite.image = self.image[3][self.building[x][y].type - 1]
+                    sprite.image = self.image[3][self.building[x][y].team - 1][self.building[x][y].type - 1][self.building[x][y].subType]
                     group.add(sprite)
         # отрисовка
         group.draw(screen)
@@ -688,14 +690,13 @@ class Game:
                 # если атакуем постройку
                 if self.building[x1][y1].type != Type().void:
                     # милишники занимают клетку атакуемого
-                    if self.unit[x0][y0].attackRange() == 1:
-                            self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
-                            self.building[x1][y1].type = Type().void if self.building[x1][y1].type == Type().plate else Type().plate
-                            self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
-                            self.selectedPos = (x1, y1)
-                    # дальники просто убивают
-                    else:
+                    if self.unit[x0][y0].type == Type().tower or self.unit[x0][y0].attackRange() > 1:
                         self.building[x1][y1].type = Type().void if self.building[x1][y1].type == Type().plate else Type().plate
+                    else:
+                        self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
+                        self.building[x1][y1].type = Type().void if self.building[x1][y1].type == Type().plate else Type().plate
+                        self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
+                        self.selectedPos = (x1, y1)                 
 
     def loadToStepBuffer(self):
         # елемент содержит информацию о клетках, юнитах, строениях и селекту

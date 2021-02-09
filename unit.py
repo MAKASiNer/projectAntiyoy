@@ -38,6 +38,7 @@ class Unit:
         if team == None: self.team = 0
         else: self.team = team
 
+
     def __eq__(self, other):
         if self.type == other.type and self.subType == other.subType: return True
         else: return False
