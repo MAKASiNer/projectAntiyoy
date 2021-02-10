@@ -346,5 +346,27 @@ IMAGE = [
         pygame.transform.scale(pygame.image.load("source/texture/building/road13.png"), PLATES_SIZE),
         pygame.transform.scale(pygame.image.load("source/texture/building/road14.png"), PLATES_SIZE),
         pygame.transform.scale(pygame.image.load("source/texture/building/road15.png"), PLATES_SIZE)
+    ],
+    # 5
+    [
+        # player 1
+        [
+            pygame.transform.scale(pygame.image.load("source/interface/select_pl1.png"), PLATES_SIZE)
+        ],
+
+        # player 2
+        [
+            pygame.transform.scale(pygame.image.load("source/interface/select_pl2.png"), PLATES_SIZE)
+        ],
+
+        # player 3
+        [
+            pygame.transform.scale(pygame.image.load("source/interface/select_pl3.png"), PLATES_SIZE)
+        ],
+
+        # player 4
+        [
+            pygame.transform.scale(pygame.image.load("source/interface/select_pl4.png"), PLATES_SIZE)
+        ]
     ]
 ]

@@ -1,4 +1,5 @@
 from type import Type
+from cell import Cell
 
 
 
@@ -24,6 +25,22 @@ class Building:
     ''' увеличивает уровень здания '''
     def lvlUp(self):
         self.subType = min(self.subType + 1, 2)
+
+    ''' возращает доход со здания '''
+    def revenue(self, cell=Cell()):     
+        if self.type == Type().farm:
+            if cell.subType == Type().steppe: return [self.subType + 1, 0, 0]
+            else: return [1, 0, 0]
+
+        if self.type == Type().sawmill:
+            if cell.subType == Type().forest: return [0, self.subType + 1, 0]
+            else: return [0, 1, 0]
+
+        if self.type == Type().quarry:
+            if cell.subType == Type().mountain: return [0, 0, self.subType + 1]
+            else: return [0, 0, 1]
+        
+        return [0, 0, 0]
 
     ''' принимает матрицу 3х3, меняет и возращает индекс кусочка дороги (self.subType)'''
     def indexOfRoadPiece(self, mtrx):

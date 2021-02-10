@@ -16,6 +16,5 @@ if __name__ == '__main__':
     while True:
         game.render(screen)
         game.event()
-        game.logic()
         pygame.display.flip()
     pygame.quit()
