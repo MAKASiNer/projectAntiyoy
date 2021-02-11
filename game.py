@@ -47,7 +47,7 @@ class Game:
         self.freeCell = pygame.transform.scale(pygame.image.load("source/interface/freeCell.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
 
 
-    def generateMapV1(self, 
+    def generateMapV1(self,
         seed=None, 
         peakCount=None, 
         peakRadius=None, 
@@ -220,7 +220,7 @@ class Game:
         image.save("source/pattern/pattern_step_3.png")
         self.background = pygame.image.load("source/pattern/pattern_step_3.png")
 
-    def generateMapV2(self):  
+    def generateMapV2(self):
         islandCount = random.randint(2, 5)                      # количество островов
         islandLenVariation = int(self.size[0] / 2)              # модуль колебания радиусов островов
         steppeLenVariation = int(self.size[0] / 3)              # модуль колебания радиусов гор 
@@ -307,14 +307,7 @@ class Game:
         image.save("source/pattern/bg.png")
         self.background = pygame.image.load("source/pattern/bg.png")
 
-        self.stepBuffer = [
-            [
-                copy.deepcopy(self.cell),
-                copy.deepcopy(self.unit),
-                copy.deepcopy(self.building),
-                copy.deepcopy(self.selectedPos)
-            ]
-        ]
+        self.clearStepBuffer()
 
 
     def render(self, screen):
@@ -397,7 +390,8 @@ class Game:
         ))
 
         # текст с инфой о ресурсах
-        resourcesInfo_text = 'money: {}, resuorces: {}'.format(
+        resourcesInfo_text = 'player: [team: {}, money: {}, resuorces: {}]'.format(
+                self.player.thisPlayer(),
                 self.player.money(),
                 self.player.resources() 
         )
@@ -680,6 +674,7 @@ class Game:
                 if event.key == pygame.K_n: 
                     print("next player: {}".format(self.player.nextPlaeyr()))
                     self.logic()
+                    self.clearStepBuffer()
     
     def moveUnit(self, From, To):
         x0, y0 = From[0], From[1]
@@ -718,7 +713,6 @@ class Game:
 
                 # если юнита
                 if self.unit[x1][y1].type != Type().void:
-                    
                     # если больше атаки - то побеждаем, если атаки равны и хп больше - то побеждаем, иначе смэрть
                     win = 0
                     if self.unit[x0][y0].damage() >= self.unit[x1][y1].health(): win = True
@@ -743,12 +737,26 @@ class Game:
                 if self.building[x1][y1].type != Type().void:
                     # милишники занимают клетку атакуемого
                     if self.unit[x0][y0].type == Type().tower or self.unit[x0][y0].attackRange() > 1:
-                        self.building[x1][y1].type = Type().void if self.building[x1][y1].type == Type().plate else Type().plate
+                        self.building[x1][y1].type = Type().void 
                     else:
-                        self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
-                        self.building[x1][y1].type = Type().void if self.building[x1][y1].type == Type().plate else Type().plate
+                        self.building[x1][y1].type = Type().void 
+                        self.moveUnit((x0, y0), (x1, y1))
                         self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
                         self.selectedPos = (x1, y1)                 
+
+    def attackTower(self):
+        for y in range(self.size[1]):
+            for x in range(self.size[0]):
+                # башни бьют всех не своих в радиусе атаки
+                if self.unit[x][y].type == Type().tower:
+                    # проходжим по радиусу атаки
+                    r = self.unit[x][y].attackRange()
+                    for _y in range(y - r, y + r + 1):
+                        for _x in range(x - r, x + r + 1):
+                            # башня башне башня
+                            if self.unit[_x][_y].type != Type().tower:
+                                self.attackUnit((x, y), (_x, _y))
+
 
     def loadToStepBuffer(self):
         # елемент содержит информацию о клетках, юнитах, строениях и селекту
@@ -795,29 +803,38 @@ class Game:
             self.building = element[2]
             self.selectedPos = element[3]
 
+    def clearStepBuffer(self):
+        self.stepBuffer = [
+            [
+                copy.deepcopy(self.cell),
+                copy.deepcopy(self.unit),
+                copy.deepcopy(self.building),
+                copy.deepcopy(self.selectedPos)
+            ]
+        ]
 
-    def logic(self):      
-        for y in range(self.size[1]):
-            for x in range(self.size[0]):
-                # башни бьют всех не своих в радиусе атаки
-                if self.unit[x][y].type == Type().tower:
-                    # проходжим по радиусу атаки
-                    r = self.unit[x][y].attackRange()
-                    for _y in range(y - r, y + r + 1):
-                        for _x in range(x - r, x + r + 1):
-                            # башня башне башня
-                            if self.unit[_x][_y].type != Type().tower:
-                                self.attackUnit((x, y), (_x, _y))
-        
+
+    def logic(self):
+        self.attackTower()
+        self.player.resources(add=self.calculateResources())
+        self.player.money(add=self.calculateMoney())
+
+    def calculateResources(self):
+        resources = [0, 0, 0]
         # начисление ресов
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 if self.building[x][y].team == self.player.thisPlayer():
                     if self.building[x][y].revenue():
-                        self.player.resources(add=self.building[x][y].revenue(self.cell[x][y]))
-        
-        # начисление денег 
-        #...
-        
-        # хавание денег
-        #...
+                        add = self.building[x][y].revenue(self.cell[x][y])
+                        resources = [(resources[i] + add[i]) for i in range(3)]
+        return resources
+    
+    def calculateMoney(self):
+        add = 0
+        # начисление баблишка 
+        for y in range(self.size[1]):
+            for x in range(self.size[0]):
+                if self.cell[x][y].team == self.player.thisPlayer():
+                    add += 1
+        return add
