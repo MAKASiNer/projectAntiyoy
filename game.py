@@ -5,6 +5,7 @@ from type import Type
 from building import Building
 from player import Player
 from loader import IMAGE, PLATES_SIZE
+from button import Button
 
 import copy
 import math
@@ -45,6 +46,20 @@ class Game:
         ]
         self.select = pygame.transform.scale(pygame.image.load("source/interface/select.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
         self.freeCell = pygame.transform.scale(pygame.image.load("source/interface/freeCell.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
+
+        # кнопки 
+        self.test1 = Button(
+            (((self.size[0] + 2) * self.plates_size[0], 6 * self.plates_size[1]),
+            (50, 50))
+        )
+        self.test2 = Button(
+            (((self.size[0] + 4) * self.plates_size[0], 6 * self.plates_size[1]),
+            (50, 50))
+        )
+        self.test3 = Button(
+            (((self.size[0] + 6) * self.plates_size[0], 6 * self.plates_size[1]),
+            (50, 50))
+        )
 
 
     def generateMapV1(self,
@@ -311,6 +326,10 @@ class Game:
 
 
     def render(self, screen):
+        """
+        для оптимизации читать всех инитов и здания в листы, а потом из этих листов отрисовывать(а не парсить все поле)
+        """
+        self.renderInterface(screen)
         self.renderPlace(screen)
         self.renderArea(screen)
         self.renderSelect(screen)
@@ -319,32 +338,12 @@ class Game:
         self.renderBuilding(screen)
         self.renderUnit(screen)
 
-    def renderPlace(self, screen):
+    def renderInterface(self, screen):
         # группа
         group = pygame.sprite.Group()
 
         # интерфейс
         screen.fill((255, 255, 255))
-        # левая рамка
-        pygame.draw.rect(screen, (0, 0, 0), (
-            self.size[0] * self.plates_size[0], 0, 
-            self.plates_size[0], self.size[1] * self.plates_size[1]
-        ))
-        # правая рамка
-        pygame.draw.rect(screen, (0, 0, 0), (
-            self.winSize[0] - self.plates_size[0], 0, 
-            self.plates_size[0], self.size[1] * self.plates_size[1]
-        ))
-        # верхняя 
-        pygame.draw.rect(screen, (0, 0, 0), (
-            self.size[0] * self.plates_size[0], 0, 
-            self.winSize[0] - self.size[0] * self.plates_size[0], self.plates_size[1]
-        ))
-        # нижная
-        pygame.draw.rect(screen, (0, 0, 0), (
-            self.size[0] * self.plates_size[0], self.winSize[1] - self.plates_size[1], 
-            self.winSize[0] - self.size[0] * self.plates_size[0], self.size[1] * self.plates_size[1]
-        ))
 
         #---------------------------------------------------------------------------
         # текст с инфой о клетке
@@ -403,6 +402,18 @@ class Game:
             5 * self.plates_size[1]
         ))
         #---------------------------------------------------------------------------
+        self.test1.draw(screen)
+        self.test2.draw(screen)
+        self.test3.draw(screen)
+
+        if self.test1.pushDown() or self.test2.pushDown() or self.test3.pushDown(): print(1)
+        if self.test1.pushUp() or self.test2.pushUp() or self.test3.pushUp(): print(0)
+        # отрисовка
+        group.draw(screen)
+
+    def renderPlace(self, screen):
+        # группа
+        group = pygame.sprite.Group()
 
         # бекграунд
         sprite = pygame.sprite.Sprite()
@@ -530,9 +541,14 @@ class Game:
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1])) 
+                sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1]))
+
+                # строения
+                if self.building[x][y].type != Type().void and self.building[x][y].type != Type().road:
+                    sprite.image = self.image[3][self.building[x][y].team - 1][self.building[x][y].type - 1][self.building[x][y].subType]
+                    group.add(sprite)
                 # дорога
-                if self.building[x][y].type == Type().road:
+                elif self.building[x][y].type == Type().road:
                     # матрица с ситуацией на поле 
                     piece = [[False, False, False], [False, True, False], [False, False, False]]
                     try:
@@ -543,10 +559,6 @@ class Game:
                     except: pass
                     # принимаем тип дороги
                     sprite.image = self.image[4][Building().indexOfRoadPiece(piece)]
-                    group.add(sprite)
-                # здания
-                elif self.building[x][y].type != Type().void:
-                    sprite.image = self.image[3][self.building[x][y].team - 1][self.building[x][y].type - 1][self.building[x][y].subType]
                     group.add(sprite)
         # отрисовка
         group.draw(screen)
