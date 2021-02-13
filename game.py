@@ -769,6 +769,17 @@ class Game:
                             if self.unit[_x][_y].type != Type().tower:
                                 self.attackUnit((x, y), (_x, _y))
 
+    def spawnUnit(self, unit, To):
+        x = To[0]
+        y = To[1]
+        
+        # если клетка вода без дороги, то не спавним
+        if self.cell[x][y].type == Type().void and self.building[x][y].type != Type().road: return 
+
+        if self.unit[x][y].type == Type().void:
+            self.unit[x][y].type = unit
+            if Building[x][y].type != Type().road: Building[x][y].type = Type().road
+
 
     def loadToStepBuffer(self):
         # елемент содержит информацию о клетках, юнитах, строениях и селекту
