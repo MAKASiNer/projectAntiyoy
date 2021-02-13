@@ -5,8 +5,7 @@ import pygame
 
 
 if __name__ == '__main__':
-    game = Game((30, 30), 4, (1600, 990))
-    #game.generateMapV1()
+    game = Game((20, 20), 4, (1600, 800))
     game.generateMapV2()
     
     pygame.init()

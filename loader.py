@@ -1,7 +1,7 @@
 import pygame
 
 
-PLATES_SIZE = (33, 33)
+PLATES_SIZE = (40, 40)
 
 IMAGE = [
     # 0

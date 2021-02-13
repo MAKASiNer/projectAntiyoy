@@ -628,41 +628,26 @@ class Game:
                 y = min(self.mousePos[1], self.size[1] - 1)
 
                 # спавн персонажей (временно)
-                if event.key == pygame.K_0: 
-                    self.unit[x][y] = Unit(Type().worker, 0, self.player.thisPlayer())
-                if event.key == pygame.K_1: 
-                    self.unit[x][y] = Unit(Type().saber, 0, self.player.thisPlayer())
-                if event.key == pygame.K_2: 
-                    self.unit[x][y] = Unit(Type().assassin, 0, self.player.thisPlayer())
-                if event.key == pygame.K_3: 
-                    self.unit[x][y] = Unit(Type().berserker, 0, self.player.thisPlayer())
-                if event.key == pygame.K_4: 
-                    self.unit[x][y] = Unit(Type().archer, 0, self.player.thisPlayer())
-                if event.key == pygame.K_5: 
-                    self.unit[x][y] = Unit(Type().caster, 0, self.player.thisPlayer())
-                if event.key == pygame.K_6: 
-                    self.unit[x][y] = Unit(Type().rider, 0, self.player.thisPlayer())
-                if event.key == pygame.K_7: 
-                    self.unit[x][y] = Unit(Type().lancer, 0, self.player.thisPlayer())
-                if event.key == pygame.K_8: 
-                    self.unit[x][y] = Unit(Type().tower, 0, self.player.thisPlayer())
+                if event.key == pygame.K_0: self.spawnUnit(Unit(Type().worker, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_1: self.spawnUnit(Unit(Type().saber, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_2: self.spawnUnit(Unit(Type().assassin, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_3: self.spawnUnit(Unit(Type().berserker, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_4: self.spawnUnit(Unit(Type().archer, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_5: self.spawnUnit(Unit(Type().caster, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_6: self.spawnUnit(Unit(Type().rider, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_7: self.spawnUnit(Unit(Type().lancer, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_8: self.spawnUnit(Unit(Type().tower, 0, self.player.thisPlayer()), (x, y))
                 #спавн зданий (временно)
-                if event.key == pygame.K_F1: 
-                    self.building[x][y] = Building(Type().plate, 0, self.player.thisPlayer())
-                if event.key == pygame.K_F2: 
-                    self.building[x][y] = Building(Type().barracks, 0, self.player.thisPlayer())
-                if event.key == pygame.K_F3: 
-                    self.building[x][y] = Building(Type().farm, 0, self.player.thisPlayer())
-                if event.key == pygame.K_F4: 
-                    self.building[x][y] = Building(Type().quarry, 0, self.player.thisPlayer())
-                if event.key == pygame.K_F5: 
-                    self.building[x][y] = Building(Type().sawmill, 0, self.player.thisPlayer())
-                if event.key == pygame.K_F6: 
-                    self.building[x][y] = Building(Type().road, 0, self.player.thisPlayer())
+                if event.key == pygame.K_F1: self.spawnBuilding(Building(Type().plate, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_F2: self.spawnBuilding(Building(Type().barracks, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_F3: self.spawnBuilding(Building(Type().farm, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_F4: self.spawnBuilding(Building(Type().quarry, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_F5: self.spawnBuilding(Building(Type().sawmill, 0, self.player.thisPlayer()), (x, y))
+                if event.key == pygame.K_F6: self.spawnBuilding(Building(Type().road, 0, self.player.thisPlayer()), (x, y))
 
-                # поставить/убрать визуализацию селекта на клетку
-                if event.key == pygame.K_s: self.cell[x][y].isSelected = True
-                if event.key == pygame.K_d: self.cell[x][y].isSelected = False
+                # захватить/покинуть клетку
+                if event.key == pygame.K_s: self.cell[x][y].team = self.player.thisPlayer()
+                if event.key == pygame.K_d: self.cell[x][y].team = Type().void
 
                 # лвлапп
                 if event.key == pygame.K_u:
@@ -680,7 +665,6 @@ class Game:
 
                 # откат хода
                 if event.key == pygame.K_z: self.loadFromStepBuffer()
-                else: self.loadToStepBuffer()
 
                 # отдать ход следующему игроку
                 if event.key == pygame.K_n: 
@@ -709,6 +693,8 @@ class Game:
                     self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
                     self.selectedPos = (x1, y1)
                     if self.cell[x1][y1].type != Type().void: self.cell[x1][y1].team = self.unit[x1][y1].team
+                    
+        self.loadToStepBuffer()
     
     def attackUnit(self, From, To):
         x0, y0 = From[0], From[1]
@@ -754,7 +740,9 @@ class Game:
                         self.building[x1][y1].type = Type().void 
                         self.moveUnit((x0, y0), (x1, y1))
                         self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
-                        self.selectedPos = (x1, y1)                 
+                        self.selectedPos = (x1, y1)
+        
+        self.loadToStepBuffer()              
 
     def attackTower(self):
         for y in range(self.size[1]):
@@ -772,13 +760,29 @@ class Game:
     def spawnUnit(self, unit, To):
         x = To[0]
         y = To[1]
-        
-        # если клетка вода без дороги, то не спавним
-        if self.cell[x][y].type == Type().void and self.building[x][y].type != Type().road: return 
 
+        # если ходим в воду, при этом на воде нет дороги
+        if self.cell[x][y].type == Type().void and self.building[x][y].type != Type().road: return
+
+        # если место свободно
         if self.unit[x][y].type == Type().void:
-            self.unit[x][y].type = unit
-            if Building[x][y].type != Type().road: Building[x][y].type = Type().road
+            self.unit[x][y] = unit
+            # юниты уничтожают здания 
+            if self.building[x][y].type != Type().road: self.building[x][y].type = Type().void
+            
+        self.loadToStepBuffer()
+
+    def spawnBuilding(self, building, To):
+        x = To[0]
+        y = To[1]
+
+        # если место свободно и пренадлежит текущему игроку
+        if self.unit[x][y].type == Type().void and self.building[x][y].type == Type().void and self.cell[x][y].team == self.player.thisPlayer():
+            # строить на воде можно только дороги
+            if self.cell[x][y].type == Type().void and building.type != Type().road: return
+            self.building[x][y] = building
+        
+        self.loadToStepBuffer()
 
 
     def loadToStepBuffer(self):
