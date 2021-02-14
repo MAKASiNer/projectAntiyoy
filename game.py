@@ -21,21 +21,21 @@ class Game:
         self.size = size                        # размеры поля в (КЛЕТКИ по х, КЛЕТКИ по у)
         self.player = Player(playerCount)       # игроки
         self.mousePos = (-1, -1)                # координаты мышки в клетках
-        self.selectedPos = (-1, -1)             # выбранная позиция
-        self.winSize = winSize                  # размеры окна          
+        self.selectedPos = (0, 0)               # выбранная позиция
+        self.winSize = winSize                  # размеры окна
+        self.sideShift = 400                    # сдвиг от левого бока   
 
-        # клетки поля
-        self.cell = [[Cell() for _ in range(size[1])] for _ in range(size[0])]
-        # юниты
-        self.unit = [[Unit() for _ in range(size[1])] for _ in range(size[0])]
-        # постройки
-        self.building = [[Building() for _ in range(size[1])] for _ in range(size[0])]
+        
+        self.cell = [[Cell() for _ in range(size[1])] for _ in range(size[0])]          # клетки поля      
+        self.unit = [[Unit() for _ in range(size[1])] for _ in range(size[0])]          # юниты      
+        self.building = [[Building() for _ in range(size[1])] for _ in range(size[0])]  # постройки
 
         # буффер ходов
         self.stepBuffer = list()
 
-        # размеры
-        self.plates_size = PLATES_SIZE     
+        # размеры плитки
+        self.plates_size = PLATES_SIZE    
+         
         # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж дорог, [5] - кортеж областей
         self.image = IMAGE
 
@@ -46,20 +46,6 @@ class Game:
         ]
         self.select = pygame.transform.scale(pygame.image.load("source/interface/select.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
         self.freeCell = pygame.transform.scale(pygame.image.load("source/interface/freeCell.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
-
-        # кнопки 
-        self.test1 = Button(
-            (((self.size[0] + 2) * self.plates_size[0], 6 * self.plates_size[1]),
-            (50, 50))
-        )
-        self.test2 = Button(
-            (((self.size[0] + 4) * self.plates_size[0], 6 * self.plates_size[1]),
-            (50, 50))
-        )
-        self.test3 = Button(
-            (((self.size[0] + 6) * self.plates_size[0], 6 * self.plates_size[1]),
-            (50, 50))
-        )
 
 
     def generateMapV1(self,
@@ -341,75 +327,70 @@ class Game:
     def renderInterface(self, screen):
         # группа
         group = pygame.sprite.Group()
-
-        # интерфейс
         screen.fill((255, 255, 255))
+        
+        self.renderCellInfo(screen)
+        self.renderUnitInfo(screen)
+        self.renderBuildingInfo(screen)
 
-        #---------------------------------------------------------------------------
-        # текст с инфой о клетке
-        cellInfo_text = 'cell:         [type: {}, subType: {}, team: {}]'.format(
-                self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
-                self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
-                self.cell[self.selectedPos[0]][self.selectedPos[1]].team
-            )
-
-        cellInfo_font = pygame.font.Font("source/font/font1.fon", 10)
-        cellInfo = cellInfo_font.render(cellInfo_text, True, (0, 0, 0))
-        screen.blit(cellInfo, (
-            (self.size[0] + 2) * self.plates_size[0], 
-            2 * self.plates_size[1]
-        ))
-
-        # текст с инфой о юните
-        unitInfo_text = 'unit:         [type: {}, subType: {}, team: {}]'.format(
-                self.unit[self.selectedPos[0]][self.selectedPos[1]].type,
-                self.unit[self.selectedPos[0]][self.selectedPos[1]].subType,
-                self.unit[self.selectedPos[0]][self.selectedPos[1]].team
-            )
-
-        unitInfo_font = pygame.font.Font("source/font/font1.fon", 10)
-        unitInfo = unitInfo_font.render(unitInfo_text, True, (0, 0, 0))
-        screen.blit(unitInfo, (
-            (self.size[0] + 2) * self.plates_size[0], 
-            3 * self.plates_size[1]
-        ))
-
-        # текст с инфой о строение
-        buildingInfo_text = 'building: [type: {}, subType: {}, team: {}]'.format(
-                self.building[self.selectedPos[0]][self.selectedPos[1]].type,
-                self.building[self.selectedPos[0]][self.selectedPos[1]].subType,
-                self.building[self.selectedPos[0]][self.selectedPos[1]].team
-            )
-
-        buildingInfo_font = pygame.font.Font("source/font/font1.fon", 10)
-        buildingInfo = buildingInfo_font.render(buildingInfo_text, True, (0, 0, 0))
-        screen.blit(buildingInfo, (
-            (self.size[0] + 2) * self.plates_size[0], 
-            4 * self.plates_size[1]
-        ))
-
-        # текст с инфой о ресурсах
-        resourcesInfo_text = 'player: [team: {}, money: {}, resuorces: {}]'.format(
-                self.player.thisPlayer(),
-                self.player.money(),
-                self.player.resources() 
-        )
-
-        resourcesInfo_font = pygame.font.Font("source/font/font1.fon", 10)
-        resourcesInfo = resourcesInfo_font.render(resourcesInfo_text, True, (0, 0, 0))
-        screen.blit(resourcesInfo, (
-            (self.size[0] + 2) * self.plates_size[0], 
-            5 * self.plates_size[1]
-        ))
-        #---------------------------------------------------------------------------
-        self.test1.draw(screen)
-        self.test2.draw(screen)
-        self.test3.draw(screen)
-
-        if self.test1.pushDown() or self.test2.pushDown() or self.test3.pushDown(): print(1)
-        if self.test1.pushUp() or self.test2.pushUp() or self.test3.pushUp(): print(0)
         # отрисовка
         group.draw(screen)
+        
+    def renderCellInfo(self, screen):
+        # информация о клетке
+        AboutCell = pygame.font.Font(None, 25)
+        text = list()
+        
+        text.append("    ___КЛЕТКА___")
+        text.append("         Позиция: {} {}".format(self.selectedPos[0], self.selectedPos[1]))
+        text.append("         Тип местности: {}".format(self.cell[self.selectedPos[0]][self.selectedPos[1]].decryptionType()))
+        text.append("         Принадлежит: {}".format(self.cell[self.selectedPos[0]][self.selectedPos[1]].decryptionTeam()))
+        
+        for i in range(len(text)):
+            
+            screen.blit(AboutCell.render(text[i], False, (0, 0, 0)) , (
+                0, 
+                35 + i * 35
+            ))
+
+    def renderUnitInfo(self, screen):
+        # информация о ините
+        AboutCell = pygame.font.Font(None, 25)
+        text = list()
+        
+        if self.unit[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
+            text.append("    ___ПЕШКА___")
+            text.append("         Тип : {}".format(self.unit[self.selectedPos[0]][self.selectedPos[1]].decryptionType()))
+            text.append("         Уровень: {}".format(self.unit[self.selectedPos[0]][self.selectedPos[1]].decryptionLevel()))
+            text.append("         Принадлежит: {}".format(self.unit[self.selectedPos[0]][self.selectedPos[1]].decryptionTeam()))
+            text.append("         Урон: {}".format(self.unit[self.selectedPos[0]][self.selectedPos[1]].damage()))
+            text.append("         Защита: {}".format(self.unit[self.selectedPos[0]][self.selectedPos[1]].health()))
+            text.append("         Радиус атаки: {}".format(self.unit[self.selectedPos[0]][self.selectedPos[1]].attackRange()))
+            text.append("         Радиус перемещения: {}".format(self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange()))
+        
+        for i in range(len(text)):
+            
+            screen.blit(AboutCell.render(text[i], False, (0, 0, 0)) , (
+                0, 
+                210 + i * 35
+            ))
+
+    def renderBuildingInfo(self, screen):
+        AboutCell = pygame.font.Font(None, 25)
+        text = list()
+        
+        if self.building[self.selectedPos[0]][self.selectedPos[1]].type != Type().void:
+            text.append("    ___ПОСТРОЙКА___")
+            text.append("         Тип : {}".format(self.building[self.selectedPos[0]][self.selectedPos[1]].decryptionType()))
+            text.append("         Уровень: {}".format(self.building[self.selectedPos[0]][self.selectedPos[1]].decryptionLevel()))
+            text.append("         Принадлежит: {}".format(self.building[self.selectedPos[0]][self.selectedPos[1]].decryptionTeam()))
+        
+        for i in range(len(text)):
+            
+            screen.blit(AboutCell.render(text[i], False, (0, 0, 0)) , (
+                0, 
+                210 + i * 35
+            ))
 
     def renderPlace(self, screen):
         # группа
@@ -417,7 +398,7 @@ class Game:
 
         # бекграунд
         sprite = pygame.sprite.Sprite()
-        sprite.rect = (0, 0)
+        sprite.rect = (self.sideShift, 0)
         sprite.image = self.background
         group.add(sprite)
         # отрисовка
@@ -430,7 +411,7 @@ class Game:
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1])) 
+                sprite.rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1])) 
                 if self.cell[x][y].team != Type().void: 
                     sprite.image = self.image[5][self.cell[x][y].team - 1][0]
                     group.add(sprite)
@@ -444,7 +425,7 @@ class Game:
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]) + 1, int(y * self.plates_size[1]) + 1)
+                sprite.rect = (int(x * self.plates_size[0]) + 1 + self.sideShift, int(y * self.plates_size[1]) + 1)
                 # селект
                 if self.cell[x][y].isSelected:
                     sprite.image = self.select
@@ -467,7 +448,7 @@ class Game:
                     for _y in range(y0 - r, y0 + r + 1):
                         for _x in range(x0 - r, x0 + r + 1):
                             sprite = pygame.sprite.Sprite()
-                            sprite.rect = (_x * self.plates_size[0] + 1, _y * self.plates_size[1] + 1)
+                            sprite.rect = (_x * self.plates_size[0] + 1 + self.sideShift, _y * self.plates_size[1] + 1)
 
                             try:
                                 # если клетка - вода без дороги, то не красим
@@ -507,7 +488,7 @@ class Game:
                             try:
                                 if self.unit[_x][_y].type == Type().void and self.building[_x][_y].type == Type().void: continue
                                 sprite = pygame.sprite.Sprite()
-                                sprite.rect = (_x * self.plates_size[0] + 1, _y * self.plates_size[1] + 1)
+                                sprite.rect = (_x * self.plates_size[0] + 1 + self.sideShift, _y * self.plates_size[1] + 1)
 
                                 if self.unit[_x][_y].type != Type().void:
                                     sprite.image =  self.occupiedCell[0 if self.unit[_x][_y].team != self.unit[x0][y0].team else 1]
@@ -526,7 +507,7 @@ class Game:
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1]))
+                sprite.rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
                 # юниты
                 if self.unit[x][y].type != Type().void:
                     sprite.image = self.image[2][self.unit[x][y].team - 1][self.unit[x][y].type - 1][self.unit[x][y].subType]
@@ -541,7 +522,7 @@ class Game:
         for y in range(self.size[1]):
             for x in range(self.size[0]):
                 sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]), int(y * self.plates_size[1]))
+                sprite.rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
 
                 # строения
                 if self.building[x][y].type != Type().void and self.building[x][y].type != Type().road:
@@ -551,10 +532,16 @@ class Game:
                 elif self.building[x][y].type == Type().road:
                     # матрица с ситуацией на поле 
                     piece = [[False, False, False], [False, True, False], [False, False, False]]
-                    try:
+                    try: 
                         if self.building[x][y - 1].type == Type().road: piece[0][1] = True
+                    except: pass
+                    try: 
                         if self.building[x - 1][y].type == Type().road: piece[1][0] = True
+                    except: pass
+                    try: 
                         if self.building[x + 1][y].type == Type().road: piece[1][2] = True
+                    except: pass
+                    try: 
                         if self.building[x][y + 1].type == Type().road: piece[2][1] = True
                     except: pass
                     # принимаем тип дороги
@@ -571,8 +558,8 @@ class Game:
 
             # задаем координаты мышки
             if event.type == pygame.MOUSEMOTION:
-                x = event.pos[0] // self.plates_size[0]
-                y = event.pos[1] // self.plates_size[1]
+                x = (event.pos[0] - self.sideShift) // self.plates_size[0]
+                y = (event.pos[1]) // self.plates_size[1]
                 self.mousePos = (x, y)
 
             # задаем селект
@@ -776,11 +763,11 @@ class Game:
         x = To[0]
         y = To[1]
 
-        # если место свободно и пренадлежит текущему игроку
-        if self.unit[x][y].type == Type().void and self.building[x][y].type == Type().void and self.cell[x][y].team == self.player.thisPlayer():
-            # строить на воде можно только дороги
-            if self.cell[x][y].type == Type().void and building.type != Type().road: return
-            self.building[x][y] = building
+        # если место свободно
+        if self.unit[x][y].type == Type().void and self.building[x][y].type == Type().void:
+            # если пренадлежит игроку
+            if self.cell[x][y].team == self.player.thisPlayer(): self.building[x][y] = building 
+            elif self.cell[x][y].type == Type().void and building.type == Type().road: self.building[x][y] = building 
         
         self.loadToStepBuffer()
 

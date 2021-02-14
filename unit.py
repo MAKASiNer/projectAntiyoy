@@ -40,12 +40,35 @@ class Unit:
 
 
     def __eq__(self, other):
-        if self.type == other.type and self.subType == other.subType: return True
+        if self.type == other.type and self.subType == other.subType and self.team == other.team: return True
         else: return False
 
     def __ne__(self, other):
-        if self.type == other.type and self.subType == other.subType: return False
+        if self.type == other.type and self.subType == other.subType and self.team == other.team: return False
         else: return  True
+    
+    def decryptionLevel(self):
+        if self.type != Type().void: return str(self.subType + 1)
+        
+    def decryptionType(self):
+        if self.type == Type().worker: return "рабочий"
+        if self.type == Type().saber: return "мечник"
+        if self.type == Type().assassin: return "убийца"
+        if self.type == Type().berserker: return "щитоносец"
+        if self.type == Type().archer: return "лучник"
+        if self.type == Type().caster: return "маг"
+        if self.type == Type().rider: return "наездник"
+        if self.type == Type().lancer: return "копейщик"
+        if self.type == Type().tower: return "башня"
+        return "error"
+        
+    def decryptionTeam(self):
+        if self.team == Type().void: return "никому"
+        if self.team == Type().redPlayer: return "красным"
+        if self.team == Type().bluePlayer: return "синим"
+        if self.team == Type().greenPlayer: return "зеленым"
+        if self.team == Type().yellowPlayer: return "желтым"
+        return "error"
 
     ''' увеличивает уровень персонажа '''
     def lvlUp(self):

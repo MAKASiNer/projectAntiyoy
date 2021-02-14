@@ -15,12 +15,32 @@ class Building:
         else: self.team = team
     
     def __eq__(self, other):
-        if self.type == other.type and self.subType == other.subType: return True
-        else: return  False
+        if self.type == other.type and self.subType == other.subType and self.team == other.team: return True
+        else: return False
 
     def __ne__(self, other):
-        if self.type == other.type and self.subType == other.subType: return False
-        else: return True
+        if self.type == other.type and self.subType == other.subType and self.team == other.team: return False
+        else: return  True
+
+    def decryptionLevel(self):
+        if self.type != Type().void: return str(self.subType + 1)
+        
+    def decryptionType(self):
+        if self.type == Type().plate: return "место стройки"
+        if self.type == Type().barracks: return "казармы"
+        if self.type == Type().farm: return "ферма"
+        if self.type == Type().quarry: return "шахта"
+        if self.type == Type().sawmill: return "лесопильня"
+        if self.type == Type().road: return "дорога"
+        return "error"
+
+    def decryptionTeam(self):
+        if self.team == Type().void: return "никому"
+        if self.team == Type().redPlayer: return "красным"
+        if self.team == Type().bluePlayer: return "синим"
+        if self.team == Type().greenPlayer: return "зеленым"
+        if self.team == Type().yellowPlayer: return "желтым"
+        return "error"
     
     ''' увеличивает уровень здания '''
     def lvlUp(self):
