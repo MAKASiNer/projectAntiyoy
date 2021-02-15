@@ -46,6 +46,14 @@ class Game:
         ]
         self.select = pygame.transform.scale(pygame.image.load("source/interface/select.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
         self.freeCell = pygame.transform.scale(pygame.image.load("source/interface/freeCell.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
+        
+        # изображения уровней
+        self.levelImage = [
+            pygame.transform.scale(pygame.image.load("source/texture/unit/lvl1.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+            pygame.transform.scale(pygame.image.load("source/texture/unit/lvl2.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+            pygame.transform.scale(pygame.image.load("source/texture/unit/lvl3.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+            pygame.transform.scale(pygame.image.load("source/texture/unit/lvl4.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
+        ]
 
 
     def generateMapV1(self,
@@ -323,6 +331,7 @@ class Game:
         self.renderAttackRange(screen)
         self.renderBuilding(screen)
         self.renderUnit(screen)
+        self.renderLevel(screen)
 
     def renderInterface(self, screen):
         # группа
@@ -401,6 +410,7 @@ class Game:
         sprite.rect = (self.sideShift, 0)
         sprite.image = self.background
         group.add(sprite)
+        
         # отрисовка
         group.draw(screen)
 
@@ -418,6 +428,7 @@ class Game:
         # отрисовка
         group.draw(screen)
 
+    # тут кусок гавна
     def renderSelect(self, screen):
         # группа
         group = pygame.sprite.Group()
@@ -547,6 +558,26 @@ class Game:
                     # принимаем тип дороги
                     sprite.image = self.image[4][Building().indexOfRoadPiece(piece)]
                     group.add(sprite)
+        # отрисовка
+        group.draw(screen)
+
+    def renderLevel(self, screen):
+        # группа
+        group = pygame.sprite.Group()
+        # отрисовка окружения поля
+        for y in range(self.size[1]):
+            for x in range(self.size[0]):
+                sprite = pygame.sprite.Sprite()
+                sprite.rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
+                # юниты
+                if self.unit[x][y].type != Type().void:
+                    sprite.image = self.levelImage[self.unit[x][y].subType]
+                    group.add(sprite)
+                # здания
+                elif self.building[x][y].type != Type().void and self.building[x][y].type != Type().road:
+                    sprite.image = self.levelImage[self.building[x][y].subType]
+                    group.add(sprite)
+                
         # отрисовка
         group.draw(screen)
 
