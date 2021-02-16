@@ -36,8 +36,25 @@ class Game:
         # размеры плитки
         self.plates_size = PLATES_SIZE    
          
-        # [0] - пустота, [1] - кортеж земель, [2] - кортеж юнитов, [3] - кортеж зданий, [4] - кортеж дорог, [5] - кортеж областей
-        self.image = IMAGE
+        # подгрузка текстур
+        self.imageVoid = IMAGE[0]
+        self.imageGround = IMAGE[1]
+        self.imageUnit = list()
+        self.imageBuilding = IMAGE[3]
+        self.imageRoad = IMAGE[4]
+        self.imageArea = IMAGE[5]
+        
+        for ref in IMAGE[2]:
+            pl1 = ref.copy()
+            pl2 = ref.copy()
+            pl3 = ref.copy()
+            pl4 = ref.copy()
+            
+            pl1.fill((255, 30, 30), special_flags=pygame.BLEND_MIN)
+            pl2.fill((30, 255, 255), special_flags=pygame.BLEND_MIN)
+            pl3.fill((30, 255, 30), special_flags=pygame.BLEND_MIN)
+            pl4.fill((255, 255, 30), special_flags=pygame.BLEND_MIN)
+            self.imageUnit.append([pl1, pl2, pl3, pl4])
 
         # [0] - клетка занята противником, [1] - дружественным
         self.occupiedCell = [
@@ -54,182 +71,12 @@ class Game:
             pygame.transform.scale(pygame.image.load("source/texture/unit/lvl3.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
             pygame.transform.scale(pygame.image.load("source/texture/unit/lvl4.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1)),
         ]
-
-
-    def generateMapV1(self,
-        seed=None, 
-        peakCount=None, 
-        peakRadius=None, 
-        peakVerticesRange=None, 
-        peakVerticesCount=None,
-        holeCount=None, 
-        holeRadius=None, 
-        holeVerticesRange=None, 
-        holeVerticesCount=None,
-        steppePercentage=None,
-        forestPercentage=None,
-        mountainPercentage=None
-        ):
-        '''
-        seed: int - сид генерации\n
-        peakCount: int - количество опорных точек пиков\n
-        peakRadius: (int, int) - диапазон радиусов опорных точек пиков\n
-        peakVerticesRange: (int, int) - диапазон колебаний длин направлений пиков\n
-        peakVerticesCount: (int, int) - количество направлений пиков\n
-        holeCount: int - количество опорных точек дырок\n
-        holeRadius: (int, int) - диапазон радиусов опорных точек дырок\n
-        holeVerticesRange: (int, int) - диапазон колебаний длин направлений дырок\n
-        holeVerticesCount: (int, int) - количество направлений дырок\n
-        steppePercentage: float - концентрация степей
-        forestPercentage: float - концентрация лесов\n
-        mountainPercentage: float - концентрация гор\n
-        '''
-
-        # сид генерации
-        if seed == None: self.seed = datetime.datetime.now().microsecond
-        else: self.seed = seed
-        random.seed = self.seed
-
-        # количество опорных точек пиков
-        if peakCount == None: self.peakCount = random.randint(2, 7)
-        else: self.peakCount = peakCount
-
-        # диапазон радиусов опорных точек пиков
-        if peakRadius == None: self.peakRadius = (100, 500)
-        else: self.peakRadius = peakRadius
-
-        # диапазон колебаний длин направлений пиков
-        if peakVerticesRange == None: self.peakVerticesRange = (-100, +500)
-        else: self.peakVerticesRange = peakVerticesRange
-
-        # количество направлений пиков
-        if peakVerticesCount == None: self.peakVerticesCount = random.randint(3, 10)
-        else: self.peakVerticesCount = random.randint(peakVerticesCount[0], peakVerticesCount[1])
-
-        # количество опорных точек дырок
-        if holeCount == None: self.holeCount = random.randint(0, 30)
-        else: self.holeCount = holeCount
-
-        # диапазон радиусов опорных точек дырок
-        if holeRadius == None: self.holeRadius = (-100, 500)
-        else: self.holeRadius = holeRadius
-
-        # диапазон колебаний длин направлений дырок
-        if holeVerticesRange == None: self.holeVerticesRange = (-50, +300)
-        else: self.holeVerticesRange = holeVerticesRange
-
-        # количество направлений дырок
-        if holeVerticesCount == None: self.holeVerticesCount = random.randint(3, 15)
-        else: self.holeVerticesCount = random.randint(holeVerticesCount[0], holeVerticesCount[1])
-
-        # концентрация степей
-        if steppePercentage == None: self.steppePercentage = 0.8
-        else: self.steppePercentage = steppePercentage
-
-        # концентрация лесов
-        if forestPercentage == None: self.forestPercentage = 0.2
-        else: self.forestPercentage = forestPercentage
         
-        # концентрация гор
-        if mountainPercentage == None: self.mountainPercentage = 0.9
-        else: self.mountainPercentage = mountainPercentage
+        # тень
+        self.shadowImage = pygame.transform.scale(pygame.image.load("source/texture/unit/shadow.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
 
-        # первым делом создается изображение
-        image = Image.new("RGBA", (2000, 2000), (255, 255, 255))
-        pattern = ImageDraw.Draw(image)
-        pixel = image.load()
 
-        # порные точки пиков
-        peak = [(random.randint(image.size[0] / 2 + self.peakVerticesRange[0], image.size[1] / 2 + self.peakVerticesRange[1]), 
-                random.randint(image.size[0] / 2 + self.peakVerticesRange[0], image.size[1] / 2 + self.peakVerticesRange[1])) 
-                for _ in range(self.peakCount)]
-
-        # от каждой опорной точки пиков откладывается направления на расстояние радиус + колебание радиуса 
-        for center in peak:
-            length = random.randint(self.peakRadius[0], self.peakRadius[1])
-            coord = list()
-            for angle in range(0, 360, int(360 / self.peakVerticesCount)):
-                len_l = length + random.randint(self.peakVerticesRange[0], self.peakVerticesRange[1])
-                x = center[0] + math.cos(angle * math.pi / 180) * len_l
-                y = center[1] + math.sin(angle * math.pi / 180) * len_l
-                coord.append((x, y))
-            pattern.polygon(coord, fill=(0, 0, 0))
-
-        # опорные точки дырок
-        hole = [(random.randint(0, image.size[0]), random.randint(0, image.size[1])) for _ in range(self.holeCount)]
-
-        # от каждой опорной точки дырок откладывается направления на расстояние радиус + колебание радиуса 
-        for center in hole:
-            length = random.randint(self.holeRadius[0], self.holeRadius[1])
-            coord = list()
-            for angle in range(0, 360, int(360 / self.holeVerticesCount)):
-                len_l = length + random.randint(self.holeVerticesRange[0], self.holeVerticesRange[1])
-                x = center[0] + math.cos(angle * math.pi / 180) * len_l
-                y = center[1] + math.sin(angle * math.pi / 180) * len_l
-                coord.append((x, y))
-
-            # выбор типа заполнения дырки
-            a = (float(random.randint(0, 100)) / 100)
-            b = (float(random.randint(0, 100)) / 100)
-            c = (float(random.randint(0, 100)) / 100)
-
-            if a < self.forestPercentage: clr = (50, 50, 50)
-            elif b < self.steppePercentage: clr = (100, 100, 100)
-            elif c < self.mountainPercentage: clr = (150, 150, 150)
-            else: clr = (255, 255, 255)
-
-            
-            pattern.polygon(coord, fill=clr)
-
-        image.save("source/pattern/pattern_step_1.png")
-
-        # делим изображение сеткой, и закрашиваем
-        for x in range(0, image.size[0], int(image.size[0] / self.size[0])):
-            for y in range(0, image.size[1], int(image.size[1] / self.size[1])):
-                clr = 0
-                whitePxl = False
-                for _x in range(x, min(x + int(image.size[0] / self.size[0]), image.size[0])):
-                    for _y in range(y, min(y + int(image.size[1] / self.size[1]), image.size[1])):
-                        if not whitePxl and (pixel[_x, _y])[0] == 255: whitePxl = True
-                        clr += (pixel[_x, _y])[0]
-                
-                pxlCount = (min(x + int(image.size[0] / self.size[0]), image.size[0]) - x) * (min(y + int(image.size[1] / self.size[1]), image.size[1]) - y)
-                if whitePxl: clr = 255
-                else: clr /= pxlCount
-
-                if clr <= 50: clr = (50, 50, 50)
-                elif clr <= 100: clr = (100, 100, 100)
-                elif clr <= 150: clr = (150, 150, 150)
-                else: clr = (255, 255, 255)
-
-                for _x in range(x, min(x + int(image.size[0] / self.size[0]), image.size[0])):
-                    for _y in range(y, min(y + int(image.size[1] / self.size[1]), image.size[0])):
-                        pixel[_x, _y] = clr
-                
-                if clr == (50, 50, 50): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 1)
-                elif clr == (100, 100, 100): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 2)
-                elif clr == (150, 150, 150): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().ground, 0)
-                elif clr == (255, 255, 255): self.cell[int(x * self.size[0] / 2000)][int(y * self.size[1] / 2000)] = Cell(Type().void)
-
-        # создаем бекграунд
-        image.save("source/pattern/pattern_step_2.png")
-        image = Image.new("RGBA", (self.plates_size[0] * self.size[0] - 1, self.plates_size[1] * self.size[1] - 1), (255, 255, 255))
-        pixel = image.load()
-
-        for x in range(0, image.size[0]):
-            for y in range(0, image.size[1]):
-
-                _x = x // self.plates_size[0]
-                _y = y // self.plates_size[1]
-                cell_l = self.cell[_x][_y]
-
-                if cell_l.type == Type().void or cell_l.type == Type().ground:
-                    clr = self.image[cell_l.type][cell_l.subType].get_at((x % self.plates_size[0], y % self.plates_size[1 ]))
-                    pixel[x, y] = (clr[0], clr[1], clr[2], clr[3])
-        image.save("source/pattern/pattern_step_3.png")
-        self.background = pygame.image.load("source/pattern/pattern_step_3.png")
-
-    def generateMapV2(self):
+    def generateMap(self):
         islandCount = random.randint(2, 5)                      # количество островов
         islandLenVariation = int(self.size[0] / 2)              # модуль колебания радиусов островов
         steppeLenVariation = int(self.size[0] / 3)              # модуль колебания радиусов гор 
@@ -310,7 +157,8 @@ class Game:
                 cell_l = self.cell[x][y]
                 for _x in range(x * self.plates_size[0], min((x + 1) * self.plates_size[0], image.size[0])):
                     for _y in range(y * self.plates_size[1], min((y + 1) * self.plates_size[1], image.size[1])):
-                        clr = self.image[cell_l.type][cell_l.subType].get_at((_x % self.plates_size[0], _y % self.plates_size[1]))
+                        if cell_l.type == Type().void: clr = self.imageVoid[0].get_at((_x % self.plates_size[0], _y % self.plates_size[1]))
+                        else: clr = self.imageGround[cell_l.subType].get_at((_x % self.plates_size[0], _y % self.plates_size[1]))
                         pixel[_x, _y] = (clr[0], clr[1], clr[2], clr[3])
 
         image.save("source/pattern/bg.png")
@@ -402,87 +250,45 @@ class Game:
             ))
 
     def renderPlace(self, screen):
-        # группа
-        group = pygame.sprite.Group()
-
-        # бекграунд
-        sprite = pygame.sprite.Sprite()
-        sprite.rect = (self.sideShift, 0)
-        sprite.image = self.background
-        group.add(sprite)
-        
-        # отрисовка
-        group.draw(screen)
+        screen.blit(self.background, (self.sideShift, 0))
 
     def renderArea(self, screen):
-        # группа
-        group = pygame.sprite.Group()
         # области игроков
         for y in range(self.size[1]):
             for x in range(self.size[0]):
-                sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1])) 
-                if self.cell[x][y].team != Type().void: 
-                    sprite.image = self.image[5][self.cell[x][y].team - 1][0]
-                    group.add(sprite)
-        # отрисовка
-        group.draw(screen)
+                if self.cell[x][y].team != Type().void:
+                    rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1])) 
+                    screen.blit(self.imageArea[self.cell[x][y].team - 1][0], rect)
 
-    # тут кусок гавна
     def renderSelect(self, screen):
-        # группа
-        group = pygame.sprite.Group()
-        # отрисовка селекта
-        for y in range(self.size[1]):
-            for x in range(self.size[0]):
-                sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]) + 1 + self.sideShift, int(y * self.plates_size[1]) + 1)
-                # селект
-                if self.cell[x][y].isSelected:
-                    sprite.image = self.select
-                    group.add(sprite)
-        # отрисовка
-        group.draw(screen)
-
+        if self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected == True:
+            rect = (int(self.selectedPos[0] * self.plates_size[0]) + self.sideShift, int(self.selectedPos[1] * self.plates_size[1])) 
+            screen.blit(self.select, rect)
+        
     def renderMoveRange(self, screen):
-        # группа
-        group = pygame.sprite.Group()
         # поле перемещения персонажа
         if 0 <= self.selectedPos[0] < self.size[0] and 0 <= self.selectedPos[1] < self.size[1]:
             x0 = self.selectedPos[0]
             y0 = self.selectedPos[1]
             if self.unit[x0][y0].type != Type().void:
                 if self.cell[x0][y0].isSelected:
-                    # "радиус" зависит от персонажа
-                    r = self.unit[x0][y0].moveRange()
                     # закрашиваем все клетки в "радиусе"
-                    for _y in range(y0 - r, y0 + r + 1):
-                        for _x in range(x0 - r, x0 + r + 1):
-                            sprite = pygame.sprite.Sprite()
-                            sprite.rect = (_x * self.plates_size[0] + 1 + self.sideShift, _y * self.plates_size[1] + 1)
-
+                    for _y in range(y0 - self.unit[x0][y0].moveRange(), y0 + self.unit[x0][y0].moveRange() + 1):
+                        for _x in range(x0 - self.unit[x0][y0].moveRange(), x0 + self.unit[x0][y0].moveRange() + 1):
                             try:
                                 # если клетка - вода без дороги, то не красим
                                 if self.cell[_x][_y].type == Type().void and self.building[_x][_y].type != Type().road: continue 
-
-                                # если клетка - вода c дороги, то красим
-                                elif self.cell[_x][_y].type == Type().void and self.building[_x][_y].type == Type().road:
-                                    sprite.image = self.freeCell
-                                    group.add(sprite)
-
+                                
                                 # если на клетке есть юнит или здание то не закрашиваем
                                 elif self.unit[_x][_y].type != Type().void or self.building[_x][_y].type != Type().void: continue
-
+                                
                                 else:
-                                    sprite.image = self.freeCell
-                                    group.add(sprite)
+                                    rect = (_x * self.plates_size[0] + 1 + self.sideShift, _y * self.plates_size[1] + 1)
+                                    screen.blit(self.freeCell, rect)
+                                    
                             except: pass
-        # отрисовка
-        group.draw(screen)
 
     def renderAttackRange(self, screen):
-        # группа
-        group = pygame.sprite.Group()
         # поле атаки персонажа
         if 0 <= self.selectedPos[0] < self.size[0] and 0 <= self.selectedPos[1] < self.size[1]:
             x0 = self.selectedPos[0]
@@ -498,33 +304,27 @@ class Game:
                             if x0 == _x and y0 == _y: continue
                             try:
                                 if self.unit[_x][_y].type == Type().void and self.building[_x][_y].type == Type().void: continue
-                                sprite = pygame.sprite.Sprite()
-                                sprite.rect = (_x * self.plates_size[0] + 1 + self.sideShift, _y * self.plates_size[1] + 1)
 
                                 if self.unit[_x][_y].type != Type().void:
-                                    sprite.image =  self.occupiedCell[0 if self.unit[_x][_y].team != self.unit[x0][y0].team else 1]
+                                    rect = (_x * self.plates_size[0] + 1 + self.sideShift, _y * self.plates_size[1] + 1)
+                                    image =  self.occupiedCell[0 if self.unit[_x][_y].team != self.unit[x0][y0].team else 1]
+                                    screen.blit(image, rect)
+                                    
                                 elif self.building[_x][_y].type != Type().void:
-                                    sprite.image =  self.occupiedCell[0 if self.building[_x][_y].team != self.unit[x0][y0].team else 1]
-
-                                group.add(sprite)
+                                    rect = (_x * self.plates_size[0] + 1 + self.sideShift, _y * self.plates_size[1] + 1)
+                                    image =  self.occupiedCell[0 if self.building[_x][_y].team != self.unit[x0][y0].team else 1]
+                                    screen.blit(image, rect)
+                                
                             except: pass
-        # отрисовка
-        group.draw(screen)
 
     def renderUnit(self, screen):
-        # группа
-        group = pygame.sprite.Group()
         # отрисовка окружения поля
         for y in range(self.size[1]):
             for x in range(self.size[0]):
-                sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
-                # юниты
                 if self.unit[x][y].type != Type().void:
-                    sprite.image = self.image[2][self.unit[x][y].team - 1][self.unit[x][y].type - 1][self.unit[x][y].subType]
-                    group.add(sprite)
-        # отрисовка
-        group.draw(screen)
+                    rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
+                    image = self.imageUnit[self.unit[x][y].type - 1][self.unit[x][y].team - 1]
+                    screen.blit(image, rect)
 
     def renderBuilding(self, screen):
         # группа
@@ -537,7 +337,7 @@ class Game:
 
                 # строения
                 if self.building[x][y].type != Type().void and self.building[x][y].type != Type().road:
-                    sprite.image = self.image[3][self.building[x][y].team - 1][self.building[x][y].type - 1][self.building[x][y].subType]
+                    sprite.image = self.imageBuilding[self.building[x][y].team - 1][self.building[x][y].type - 1][self.building[x][y].subType]
                     group.add(sprite)
                 # дорога
                 elif self.building[x][y].type == Type().road:
@@ -556,30 +356,28 @@ class Game:
                         if self.building[x][y + 1].type == Type().road: piece[2][1] = True
                     except: pass
                     # принимаем тип дороги
-                    sprite.image = self.image[4][Building().indexOfRoadPiece(piece)]
+                    sprite.image = self.imageRoad[Building().indexOfRoadPiece(piece)]
                     group.add(sprite)
         # отрисовка
         group.draw(screen)
 
     def renderLevel(self, screen):
-        # группа
-        group = pygame.sprite.Group()
         # отрисовка окружения поля
         for y in range(self.size[1]):
-            for x in range(self.size[0]):
-                sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
+            for x in range(self.size[0]):                
                 # юниты
                 if self.unit[x][y].type != Type().void:
-                    sprite.image = self.levelImage[self.unit[x][y].subType]
-                    group.add(sprite)
+                    rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
+                    image = self.levelImage[self.unit[x][y].subType]
+                    #screen.blit(self.shadowImage, rect)
+                    screen.blit(image, rect)
+                    
                 # здания
                 elif self.building[x][y].type != Type().void and self.building[x][y].type != Type().road:
-                    sprite.image = self.levelImage[self.building[x][y].subType]
-                    group.add(sprite)
-                
-        # отрисовка
-        group.draw(screen)
+                    rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
+                    image = self.levelImage[self.building[x][y].subType]
+                    #screen.blit(self.shadowImage, rect)
+                    screen.blit(image, rect)
 
 
     def event(self):
