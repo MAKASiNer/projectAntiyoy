@@ -28,118 +28,11 @@ IMAGE = [
     ],
     # 3
     [
-        # player 1
-        [
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl1.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl1_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl2_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl3_pl1.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl1_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl2_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl3_pl1.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl1_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl2_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl3_pl1.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl1_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl2_pl1.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl3_pl1.png"), PLATES_SIZE)
-            ]
-        ],
-        # player 2
-        [
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl2.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl1_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl2_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl3_pl2.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl1_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl2_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl3_pl2.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl1_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl2_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl3_pl2.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl1_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl2_pl2.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl3_pl2.png"), PLATES_SIZE)
-            ]
-        ],
-        # player 3
-        [
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl3.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl1_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl2_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl3_pl3.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl1_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl2_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl3_pl3.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl1_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl2_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl3_pl3.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl1_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl2_pl3.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl3_pl3.png"), PLATES_SIZE)
-            ]
-        ],
-        # player 4
-        [
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl4.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl1_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl2_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl3_pl4.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl1_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl2_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/farm_lvl3_pl4.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl1_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl2_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/quarry_lvl3_pl4.png"), PLATES_SIZE)
-            ],
-            [
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl1_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl2_pl4.png"), PLATES_SIZE),
-                pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl3_pl4.png"), PLATES_SIZE)
-            ]
-        ]
+        pygame.transform.scale(pygame.image.load("source/texture/building/plate_pl1.png"), PLATES_SIZE),
+        pygame.transform.scale(pygame.image.load("source/texture/building/barracks_lvl1_pl1.png"), PLATES_SIZE),
+        pygame.transform.scale(pygame.image.load("source/texture/building/farm.png"), PLATES_SIZE),
+        pygame.transform.scale(pygame.image.load("source/texture/building/quarry.png"), PLATES_SIZE),
+        pygame.transform.scale(pygame.image.load("source/texture/building/sawmill_lvl1_pl1.png"), PLATES_SIZE)
     ],
     # 4
     [
@@ -162,24 +55,6 @@ IMAGE = [
     ],
     # 5
     [
-        # player 1
-        [
-            pygame.transform.scale(pygame.image.load("source/interface/select_pl1.png"), PLATES_SIZE)
-        ],
-
-        # player 2
-        [
-            pygame.transform.scale(pygame.image.load("source/interface/select_pl2.png"), PLATES_SIZE)
-        ],
-
-        # player 3
-        [
-            pygame.transform.scale(pygame.image.load("source/interface/select_pl3.png"), PLATES_SIZE)
-        ],
-
-        # player 4
-        [
-            pygame.transform.scale(pygame.image.load("source/interface/select_pl4.png"), PLATES_SIZE)
-        ]
+        pygame.transform.scale(pygame.image.load("source/interface/area.png"), PLATES_SIZE)
     ]
 ]

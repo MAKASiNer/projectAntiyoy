@@ -5,7 +5,6 @@ from type import Type
 from building import Building
 from player import Player
 from loader import IMAGE, PLATES_SIZE
-from button import Button
 
 import copy
 import math
@@ -40,10 +39,11 @@ class Game:
         self.imageVoid = IMAGE[0]
         self.imageGround = IMAGE[1]
         self.imageUnit = list()
-        self.imageBuilding = IMAGE[3]
+        self.imageBuilding = list()
         self.imageRoad = IMAGE[4]
-        self.imageArea = IMAGE[5]
+        self.imageArea = list()
         
+        # раздутие текстур для персонажей
         for ref in IMAGE[2]:
             pl1 = ref.copy()
             pl2 = ref.copy()
@@ -55,6 +55,32 @@ class Game:
             pl3.fill((30, 255, 30), special_flags=pygame.BLEND_MIN)
             pl4.fill((255, 255, 30), special_flags=pygame.BLEND_MIN)
             self.imageUnit.append([pl1, pl2, pl3, pl4])
+            
+        # раздутие текстур для зданий
+        for ref in IMAGE[3]:
+            pl1 = ref.copy()
+            pl2 = ref.copy()
+            pl3 = ref.copy()
+            pl4 = ref.copy()
+            
+            pl1.fill((255, 30, 30), special_flags=pygame.BLEND_MIN)
+            pl2.fill((30, 255, 255), special_flags=pygame.BLEND_MIN)
+            pl3.fill((30, 255, 30), special_flags=pygame.BLEND_MIN)
+            pl4.fill((255, 255, 30), special_flags=pygame.BLEND_MIN)
+            self.imageBuilding.append([pl1, pl2, pl3, pl4])
+            
+        # раздутие текстур для площадей
+        for ref in IMAGE[5]:
+            pl1 = ref.copy()
+            pl2 = ref.copy()
+            pl3 = ref.copy()
+            pl4 = ref.copy()
+            
+            pl1.fill((255, 30, 30), special_flags=pygame.BLEND_MULT)
+            pl2.fill((30, 255, 255), special_flags=pygame.BLEND_MIN)
+            pl3.fill((30, 255, 30), special_flags=pygame.BLEND_MIN)
+            pl4.fill((255, 255, 30), special_flags=pygame.BLEND_MIN)
+            self.imageArea.append([pl1, pl2, pl3, pl4])
 
         # [0] - клетка занята противником, [1] - дружественным
         self.occupiedCell = [
@@ -168,9 +194,7 @@ class Game:
 
 
     def render(self, screen):
-        """
-        для оптимизации читать всех инитов и здания в листы, а потом из этих листов отрисовывать(а не парсить все поле)
-        """
+
         self.renderInterface(screen)
         self.renderPlace(screen)
         self.renderArea(screen)
@@ -178,8 +202,8 @@ class Game:
         self.renderMoveRange(screen)
         self.renderAttackRange(screen)
         self.renderBuilding(screen)
-        self.renderUnit(screen)
         self.renderLevel(screen)
+        self.renderUnit(screen)
 
     def renderInterface(self, screen):
         # группа
@@ -258,7 +282,7 @@ class Game:
             for x in range(self.size[0]):
                 if self.cell[x][y].team != Type().void:
                     rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1])) 
-                    screen.blit(self.imageArea[self.cell[x][y].team - 1][0], rect)
+                    screen.blit(self.imageArea[0][self.cell[x][y].team - 1], rect)
 
     def renderSelect(self, screen):
         if self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected == True:
@@ -327,18 +351,14 @@ class Game:
                     screen.blit(image, rect)
 
     def renderBuilding(self, screen):
-        # группа
-        group = pygame.sprite.Group()
         # отрисовка окружения поля
         for y in range(self.size[1]):
             for x in range(self.size[0]):
-                sprite = pygame.sprite.Sprite()
-                sprite.rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
-
                 # строения
                 if self.building[x][y].type != Type().void and self.building[x][y].type != Type().road:
-                    sprite.image = self.imageBuilding[self.building[x][y].team - 1][self.building[x][y].type - 1][self.building[x][y].subType]
-                    group.add(sprite)
+                    image = self.imageBuilding[self.building[x][y].type - 1][self.building[x][y].team - 1]
+                    rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
+                    screen.blit(image, rect)
                 # дорога
                 elif self.building[x][y].type == Type().road:
                     # матрица с ситуацией на поле 
@@ -356,10 +376,8 @@ class Game:
                         if self.building[x][y + 1].type == Type().road: piece[2][1] = True
                     except: pass
                     # принимаем тип дороги
-                    sprite.image = self.imageRoad[Building().indexOfRoadPiece(piece)]
-                    group.add(sprite)
-        # отрисовка
-        group.draw(screen)
+                    rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
+                    screen.blit(self.imageRoad[Building().indexOfRoadPiece(piece)], rect)
 
     def renderLevel(self, screen):
         # отрисовка окружения поля
@@ -369,14 +387,14 @@ class Game:
                 if self.unit[x][y].type != Type().void:
                     rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
                     image = self.levelImage[self.unit[x][y].subType]
-                    #screen.blit(self.shadowImage, rect)
+                    # у юнитов есть тень
+                    screen.blit(self.shadowImage, rect)
                     screen.blit(image, rect)
                     
                 # здания
                 elif self.building[x][y].type != Type().void and self.building[x][y].type != Type().road:
                     rect = (int(x * self.plates_size[0]) + self.sideShift, int(y * self.plates_size[1]))
                     image = self.levelImage[self.building[x][y].subType]
-                    #screen.blit(self.shadowImage, rect)
                     screen.blit(image, rect)
 
 
@@ -394,49 +412,12 @@ class Game:
             # задаем селект
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 3:
-                    x = min(self.mousePos[0], self.size[0] - 1)
-                    y = min(self.mousePos[1], self.size[1] - 1)
-                    self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False
-                    self.cell[x][y].isSelected = True
-                    self.selectedPos = (x, y)
-
-                    text = "\
-                    \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\
-                    \npos: {}\
-                    \n\tcell:\
-                    \n\t\ttype:\t\t{}\
-                    \n\t\tsubType:\t{}\
-                    \n\t\tteam:\t\t{}\
-                    \n\t\tselect:\t\t{}\
-                    \n\tunit:\
-                    \n\t\ttype:\t\t{}\
-                    \n\t\tsubType:\t{}\
-                    \n\t\tteam:\t\t{}\
-                    \n\t\thealth:\t\t{}\
-                    \n\t\tdamage:\t\t{}\
-                    \n\t\tmoveRange:\t{}\
-                    \n\t\tattacRange:\t{}\
-                    \n\tbuilding:\
-                    \n\t\ttype:\t\t{}\
-                    \n\t\tsubType:\t{}\
-                    \n\t\tteam:\t\t{}\
-                    \n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~".format(
-                        self.selectedPos,
-                        self.cell[self.selectedPos[0]][self.selectedPos[1]].type,
-                        self.cell[self.selectedPos[0]][self.selectedPos[1]].subType,
-                        self.cell[self.selectedPos[0]][self.selectedPos[1]].team,
-                        self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected,
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].type,
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].subType,
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].team,
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].health(),
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].damage(),
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].moveRange(),
-                        self.unit[self.selectedPos[0]][self.selectedPos[1]].attackRange(),
-                        self.building[self.selectedPos[0]][self.selectedPos[1]].type,
-                        self.building[self.selectedPos[0]][self.selectedPos[1]].subType,
-                        self.building[self.selectedPos[0]][self.selectedPos[1]].team)
-                    print(text)
+                    if 0 <= self.mousePos[0] < self.size[0] and 0 <= self.mousePos[1] < self.size[1]:
+                        x = min(self.mousePos[0], self.size[0] - 1)
+                        y = min(self.mousePos[1], self.size[1] - 1)
+                        self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False
+                        self.cell[x][y].isSelected = True
+                        self.selectedPos = (x, y)
 
             if event.type == pygame.KEYDOWN:
                 
@@ -487,6 +468,7 @@ class Game:
                     print("next player: {}".format(self.player.nextPlaeyr()))
                     self.logic()
                     self.clearStepBuffer()
+                    self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False
     
     def moveUnit(self, From, To):
         x0, y0 = From[0], From[1]

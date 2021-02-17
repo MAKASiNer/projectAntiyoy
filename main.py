@@ -1,9 +1,7 @@
 from game import Game
+from menue import Menue, Button
 
-
-import os
 import pygame
-import datetime
 
 
 
@@ -14,17 +12,20 @@ if __name__ == '__main__':
     pygame.init()
     pygame.display.set_caption('ⒹⓊⓇⓀⒶ')
     screen = pygame.display.set_mode(game.winSize)
+    
+    mainMenue = Menue(((0, 0), game.winSize))
+    mainMenue.addButton(Button(((700, 300), (200, 200))))
 
     while True:
-        time1 = datetime.datetime.now()
         
         game.render(screen)
         game.event()
-        pygame.display.flip()
         
-        time2 = datetime.datetime.now()
-        print("\033[H\033[J")
-        print(1000000 / (time2.microsecond - time1.microsecond))  
+        a = mainMenue.buttonList[0].check()
+        if a[0] or a[1]: print(a)
         
-        
+        mainMenue.render(screen)
+        pygame.display.flip() 
+       
+               
     pygame.quit()

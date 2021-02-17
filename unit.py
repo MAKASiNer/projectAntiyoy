@@ -27,8 +27,9 @@ UNITPARAMETERS = [
 ]
 
 
+
 class Unit:
-    def __init__(self, Type=None, subType=None, team=None):
+    def __init__(self, Type=None, subType=None, team=None, texture=None):
         if Type == None: self.type = 0
         else: self.type = Type
 
@@ -37,7 +38,11 @@ class Unit:
 
         if team == None: self.team = 0
         else: self.team = team
-
+        
+        
+    def draw(screen, rect=None):
+        if rect != None: self.sprite.rect = rect
+        screen.blit(self.sprite, rect[0])
 
     def __eq__(self, other):
         if self.type == other.type and self.subType == other.subType and self.team == other.team: return True
@@ -48,7 +53,7 @@ class Unit:
         else: return  True
     
     def decryptionLevel(self):
-        if self.type != Type().void: return str(self.subType + 1)
+        if self.type != 0: return str(self.subType + 1)
         
     def decryptionType(self):
         if self.type == Type().worker: return "рабочий"
