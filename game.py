@@ -161,20 +161,22 @@ class Game:
                 vertexList.append((min(x, self.size[0] - 1), min(y, self.size[1] - 1)))
             # рисуем горы         
             pattern.polygon(vertexList, fill=(100, 100, 100)) 
-        
-        image.save("source\pattern\pattern0.png")
-
-        # переносим изменения на поле
-        for x in range(0, self.size[0]):
-            for y in range(0, self.size[1]):
-                if pixel[x, y][0] == 0: self.cell[x][y] = Cell(Type().ground, Type().forest)
-                if pixel[x, y][0] == 50: self.cell[x][y] = Cell(Type().ground, Type().steppe)
-                if pixel[x, y][0] == 100: self.cell[x][y] = Cell(Type().ground, Type().mountain)
-                elif pixel[x, y][0] == 255: self.cell[x][y] = Cell(Type().void)
+        image.save("source\pattern\pattern.png")
         
         self.createBg()
 
     def createBg(self):
+        image = Image.open("source\pattern\pattern.png")
+        pixel = image.load()
+        
+        # переносим изменения на поле
+        for x in range(0, self.size[0]):
+            for y in range(0, self.size[1]):
+                if pixel[x, y][0] == 0: self.cell[x][y] = Cell(Type().ground, Type().forest)
+                elif pixel[x, y][0] == 50: self.cell[x][y] = Cell(Type().ground, Type().steppe)
+                elif pixel[x, y][0] == 100: self.cell[x][y] = Cell(Type().ground, Type().mountain)
+                elif pixel[x, y][0] == 255: self.cell[x][y] = Cell(Type().void)
+        
         image = Image.new("RGBA", (self.plates_size[0] * self.size[0], self.plates_size[1] * self.size[1]), (255, 255, 255))
         pixel = image.load()
 

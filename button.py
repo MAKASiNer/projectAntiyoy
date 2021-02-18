@@ -14,14 +14,19 @@ class Button:
         self.imagePress = pygame.transform.scale(pygame.image.load("source/interface/TestButtonPress.png"), self.rect[1])
         self.imageSelect = pygame.transform.scale(pygame.image.load("source/interface/TestButtonSelect.png"), self.rect[1])
 
+    ''' проверяет коллизию кнопки '''
+    def collide(self, pos):
+        inRect = bool(0 <= pos[0] - self.rect[0][0] < self.rect[1][0] and 0 <= pos[1] - self.rect[0][1] < self.rect[1][1])
+        if inRect: return bool(self.imageHold.get_at([pos[0] - self.rect[0][0], pos[1] - self.rect[0][1]])[3] != 0)
+        return False
+
+    ''' отрисовывает кнопку '''
     def draw(self, screen):
         image = self.imageHold
 
-        if 0 <= pygame.mouse.get_pos()[0] - self.rect[0][0] < self.rect[1][0] and\
-            0 <= pygame.mouse.get_pos()[1] - self.rect[0][1] < self.rect[1][1]:
+        if self.collide(pygame.mouse.get_pos()):
             if self.pos1 != None: 
-                if 0 <= self.pos1[0] - self.rect[0][0] < self.rect[1][0] and\
-                    0 <= self.pos1[1] - self.rect[0][1] < self.rect[1][1]: image = self.imagePress
+                if self.collide(self.pos1): image = self.imagePress
                 else: image = self.imageSelect
             else: image = self.imageSelect
         else: image = self.imageHold
@@ -34,11 +39,9 @@ class Button:
             if self.pos0 == None:
                 self.pos0 = pygame.mouse.get_pos()
         else:
-            if 0 <= pygame.mouse.get_pos()[0] - self.rect[0][0] < self.rect[1][0] and\
-                0 <= pygame.mouse.get_pos()[1] - self.rect[0][1] < self.rect[1][1]:        
+            if self.collide(pygame.mouse.get_pos()):
                 if self.pos0 != None:
-                    if 0 <= self.pos0[0] - self.rect[0][0] < self.rect[1][0] and\
-                        0 <= self.pos0[1] - self.rect[0][1] < self.rect[1][1]:
+                    if self.collide(self.pos0):
                         self.pos0 = None
                         return True
                     else:
@@ -52,10 +55,7 @@ class Button:
         if pygame.mouse.get_pressed()[0]:
             if self.pos1 == None:
                 self.pos1 = pygame.mouse.get_pos()
-                if 0 <= pygame.mouse.get_pos()[0] - self.rect[0][0] < self.rect[1][0] and\
-                    0 <= pygame.mouse.get_pos()[1] - self.rect[0][1] < self.rect[1][1]:
-                    return True
-
+                if self.collide(self.pos1): return True
         else: self.pos1 = None
         return False
     
