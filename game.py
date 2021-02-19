@@ -215,6 +215,7 @@ class Game:
         self.renderCellInfo(screen)
         self.renderUnitInfo(screen)
         self.renderBuildingInfo(screen)
+        self.renderPlayerInfo(screen)
 
         # отрисовка
         group.draw(screen)
@@ -273,6 +274,24 @@ class Game:
             screen.blit(AboutCell.render(text[i], False, (0, 0, 0)) , (
                 0, 
                 210 + i * 35
+            ))
+
+    def renderPlayerInfo(self, screen):
+        AboutCell = pygame.font.Font(None, 25)
+        text = list()
+        
+        text.append("    ___ИГРОК___")
+        text.append("         Тип : {}".format(self.player.decryptionTeam()))
+        text.append("         Деньги: {}".format(self.player.money()))
+        text.append("         Дерево: {}".format(self.player.resources()[0]))
+        text.append("         Камень: {}".format(self.player.resources()[1]))
+        text.append("         Провизия: {}".format(self.player.resources()[2]))
+        
+        for i in range(len(text)):
+            
+            screen.blit(AboutCell.render(text[i], False, (0, 0, 0)) , (
+                0, 
+                510 + i * 35
             ))
 
     def renderPlace(self, screen):
@@ -467,7 +486,7 @@ class Game:
 
                 # отдать ход следующему игроку
                 if event.key == pygame.K_n: 
-                    print("next player: {}".format(self.player.nextPlaeyr()))
+                    print("next player: {}".format(self.player.nextPlayer()))
                     self.logic()
                     self.clearStepBuffer()
                     self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False

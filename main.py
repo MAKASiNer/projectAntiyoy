@@ -30,8 +30,9 @@ def mainMenue(game, screen):
 def settingMap(game, screen):
     
     mMenue = Menue(((0, 0), game.winSize))
-    mMenue.addButton(Button(((700 + 150, 500), (200, 200))))
-    mMenue.addButton(Button(((700 - 150, 500), (200, 200))))
+    mMenue.addButton(Button(((700 + 200, 500), (200, 200))))
+    mMenue.addButton(Button(((700, 500), (200, 200))))
+    mMenue.addButton(Button(((700 - 200, 500), (200, 200))))
     
     # миниатюра
     image = pygame.transform.scale(pygame.image.load("source/pattern/bg.png"), (300, 300))
@@ -43,8 +44,11 @@ def settingMap(game, screen):
                 
         # принять
         if mMenue.buttonList[0].check()[1]: break
-        # генерация нового мира
+        # сгенерировать из сохранений
         if mMenue.buttonList[1].check()[1]: 
+            game.createBg()
+        # генерация нового мира
+        if mMenue.buttonList[2].check()[1]: 
             game.generateMap()
             game.createBg()
             image = pygame.transform.scale(pygame.image.load("source/pattern/bg.png"), (300, 300))
@@ -57,7 +61,6 @@ def settingMap(game, screen):
 
 if __name__ == '__main__':
     game = Game((20, 20), 4, (1800, 800))
-    #game.generateMap()
     
     pygame.init()
     pygame.display.set_caption('ⒹⓊⓇⓀⒶ')
