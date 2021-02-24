@@ -491,13 +491,19 @@ class Game:
                     self.logic()
                     self.clearStepBuffer()
                     self.cell[self.selectedPos[0]][self.selectedPos[1]].isSelected = False
+                    
+                    for y in range(self.size[1]):
+                        for x in range(self.size[0]):
+                            self.unit[x][y].move = False
+                            self.building[x][y].move = False                   
     
     def moveUnit(self, From, To):
         x0, y0 = From[0], From[1]
         x1, y1 = To[0], To[1]
+        print(self.unit[x0][y0].move)
 
         if 0 <= x1 < self.size[0] and 0 <= y1 < self.size[1]:
-            if self.unit[x0][y0].type != Type().void:
+            if self.unit[x0][y0].type != Type().void and self.unit[x0][y0].move == False:
                 # если ходим на слишком далекое расстояние
                 if abs(x1 - x0) > self.unit[x0][y0].moveRange() or abs(y1 - y0) > self.unit[x0][y0].moveRange(): return
 
@@ -512,7 +518,9 @@ class Game:
                     self.unit[x0][y0], self.unit[x1][y1] = Unit(), self.unit[x0][y0]
                     self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
                     self.selectedPos = (x1, y1)
+                    self.unit[x1][y1].move = True
                     if self.cell[x1][y1].type != Type().void: self.cell[x1][y1].team = self.unit[x1][y1].team
+                    
                     
         self.loadToStepBuffer()
     
@@ -521,7 +529,7 @@ class Game:
         x1, y1 = To[0], To[1]
 
         if 0 <= x1 < self.size[0] and 0 <= y1 < self.size[1]:
-            if self.unit[x0][y0].type != Type().void:
+            if self.unit[x0][y0].type != Type().void and self.unit[x0][y0].move == False:
                 # если пытаемся атаковать на слишком дальнее расстояние
                 if abs(x1 - x0) > self.unit[x0][y0].attackRange() or abs(y1 - y0) > self.unit[x0][y0].attackRange(): return
                 # самовыпил - не варик
@@ -541,6 +549,7 @@ class Game:
                     if self.unit[x0][y0].type == Type().tower or self.unit[x0][y0].attackRange() > 1:
                         if win:
                             self.unit[x1][y1] = Unit()
+                            self.unit[x0][y0].move = True
                     else:
                         if win:
                             self.unit[x1][y1] = Unit()
@@ -555,13 +564,14 @@ class Game:
                 if self.building[x1][y1].type != Type().void:
                     # милишники занимают клетку атакуемого
                     if self.unit[x0][y0].type == Type().tower or self.unit[x0][y0].attackRange() > 1:
-                        self.building[x1][y1].type = Type().void 
+                        self.building[x1][y1].type = Type().void
+                        self.unit[x0][y0].move = True
                     else:
                         self.building[x1][y1].type = Type().void 
                         self.moveUnit((x0, y0), (x1, y1))
                         self.cell[x0][y0].isSelected, self.cell[x1][y1].isSelected = False, True
                         self.selectedPos = (x1, y1)
-        
+
         self.loadToStepBuffer()              
 
     def attackTower(self):

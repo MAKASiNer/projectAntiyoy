@@ -13,13 +13,15 @@ class Building:
 
         if team == None: self.team = 0
         else: self.team = team
+        
+        self.move = False
     
     def __eq__(self, other):
-        if self.type == other.type and self.subType == other.subType and self.team == other.team: return True
+        if self.type == other.type and self.subType == other.subType and self.team == other.team and self.move == other.move: return True
         else: return False
 
     def __ne__(self, other):
-        if self.type == other.type and self.subType == other.subType and self.team == other.team: return False
+        if self.type == other.type and self.subType == other.subType and self.team == other.team and self.move == other.move: return False
         else: return  True
 
     def decryptionLevel(self):
