@@ -3,7 +3,7 @@ import pygame
 
 
 class Button:
-    def __init__(self, rect, key=None):
+    def __init__(self, rect, text, key=None):
         self.key = key
         self.rect = rect
 
@@ -13,6 +13,9 @@ class Button:
         self.imageHold = pygame.transform.scale(pygame.image.load("source/interface/TestButtonHold.png"), self.rect[1])
         self.imagePress = pygame.transform.scale(pygame.image.load("source/interface/TestButtonPress.png"), self.rect[1])
         self.imageSelect = pygame.transform.scale(pygame.image.load("source/interface/TestButtonSelect.png"), self.rect[1])
+        
+        self.text = pygame.font.Font(None, 30).render(text, False, (0, 0, 0))
+        self.textShift = (self.rect[1][0] / 4, self.rect[1][1] / 2)
 
     ''' проверяет коллизию кнопки '''
     def collide(self, pos):
@@ -32,6 +35,9 @@ class Button:
         else: image = self.imageHold
 
         screen.blit(image, self.rect)
+        screen.blit(self.text, 
+                    (self.rect[0][0] + self.textShift[0], 
+                     self.rect[0][1] + self.textShift[1]))
 
     ''' возвращает ивент о отпуске после нажатия '''
     def pushUp(self):

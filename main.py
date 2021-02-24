@@ -8,9 +8,9 @@ import pygame
 def mainMenue(game, screen):
     
     mMenue = Menue(((0, 0), game.winSize))
-    mMenue.addButton(Button(((700, 150), (200, 200))))
-    mMenue.addButton(Button(((700, 300), (200, 200))))
-    mMenue.addButton(Button(((700, 450), (200, 200))))
+    mMenue.addButton(Button(((700, 150), (400, 200)), "ИГРАТЬ"))
+    mMenue.addButton(Button(((700, 300), (400, 200)), "СОЗДАТЬ МИР"))
+    mMenue.addButton(Button(((700, 450), (400, 200)), "ВЫХОД"))
     
     while True:
         for event in pygame.event.get():
@@ -30,31 +30,54 @@ def mainMenue(game, screen):
 def settingMap(game, screen):
     
     mMenue = Menue(((0, 0), game.winSize))
-    mMenue.addButton(Button(((700 + 200, 500), (200, 200))))
-    mMenue.addButton(Button(((700, 500), (200, 200))))
-    mMenue.addButton(Button(((700 - 200, 500), (200, 200))))
+    mMenue.addButton(Button(((700, 150), (400, 200)), "СГЕНЕРИРОВАТЬ"))
+    mMenue.addButton(Button(((700, 300), (400, 200)), "ПРИНЯТЬ"))
+    mMenue.addButton(Button(((700, 450), (400, 200)), "НАЗАД"))
     
     # миниатюра
-    image = pygame.transform.scale(pygame.image.load("source/pattern/bg.png"), (300, 300))
+    image = pygame.transform.scale(pygame.image.load("source/pattern/bg.png"), (400, 400))
     
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 
-        # принять
-        if mMenue.buttonList[0].check()[1]: break
+        # генерация нового мира
+        if mMenue.buttonList[0].check()[1]: 
+            game.generateMap()
+            game.createBg()
+            image = pygame.transform.scale(pygame.image.load("source/pattern/bg.png"), (400, 400))
         # сгенерировать из сохранений
         if mMenue.buttonList[1].check()[1]: 
             game.createBg()
-        # генерация нового мира
-        if mMenue.buttonList[2].check()[1]: 
-            game.generateMap()
-            game.createBg()
-            image = pygame.transform.scale(pygame.image.load("source/pattern/bg.png"), (300, 300))
+        # принять
+        if mMenue.buttonList[2].check()[1]: break 
+            
         
         mMenue.render(screen)
-        screen.blit(image, (650, 100))
+        screen.blit(image, (150, 150))
+        pygame.display.flip()
+
+def stopMenue(game, screen):
+    mMenue = Menue(((0, 0), game.winSize))
+    mMenue.addButton(Button(((700, 150), (400, 200)), "ПРОДОЛЖИТЬ"))
+    mMenue.addButton(Button(((700, 300), (400, 200)), "..."))
+    mMenue.addButton(Button(((700, 450), (400, 200)), "ВЫХОД"))
+    
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        
+        # продолжить
+        if mMenue.buttonList[0].check()[1]: return
+        # ...
+        if mMenue.buttonList[1].check()[1]: pass
+        # выход
+        if mMenue.buttonList[2].check()[1]: return 1
+            
+        
+        mMenue.render(screen)
         pygame.display.flip()
 
 
@@ -68,7 +91,10 @@ if __name__ == '__main__':
 
     mainMenue(game, screen)
 
-    while True:       
+    while True:
+        if pygame.key.get_pressed()[pygame.K_ESCAPE]: 
+            if stopMenue(game, screen) == 1: mainMenue(game, screen)
+        
         game.render(screen)
         game.event()
         pygame.display.flip() 

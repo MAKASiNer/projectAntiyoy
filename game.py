@@ -10,7 +10,6 @@ import copy
 import math
 import random
 import pygame
-import datetime
 
 
 
@@ -176,6 +175,8 @@ class Game:
                 elif pixel[x, y][0] == 50: self.cell[x][y] = Cell(Type().ground, Type().steppe)
                 elif pixel[x, y][0] == 100: self.cell[x][y] = Cell(Type().ground, Type().mountain)
                 elif pixel[x, y][0] == 255: self.cell[x][y] = Cell(Type().void)
+                self.unit[x][y].type = Type().void
+                self.building[x][y].type = Type().void
         
         image = Image.new("RGBA", (self.plates_size[0] * self.size[0], self.plates_size[1] * self.size[1]), (255, 255, 255))
         pixel = image.load()
