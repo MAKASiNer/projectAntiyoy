@@ -234,8 +234,6 @@ class Game:
         self.renderBuildingInfo(screen)
         self.renderPlayerInfo(screen)
         
-        self.mMenue.render(screen)
-        
     def renderCellInfo(self, screen):
         # информация о клетке
         AboutCell = pygame.font.Font(None, 25)
