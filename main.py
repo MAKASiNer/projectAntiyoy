@@ -83,7 +83,7 @@ def stopMenue(game, screen):
 
 
 if __name__ == '__main__':
-    game = Game((20, 20), 4, (1800, 800))
+    game = Game((6, 6), 4, (1800, 800))
     
     pygame.init()
     pygame.display.set_caption('ⒹⓊⓇⓀⒶ')
