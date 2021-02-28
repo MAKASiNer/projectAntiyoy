@@ -5,6 +5,7 @@ from type import Type
 from building import Building
 from player import Player
 from loader import IMAGE, PLATES_SIZE, UNITEXPENSES, BUILDINGEXPENSE
+from menue import Menue, Button
 
 import copy
 import math
@@ -103,6 +104,18 @@ class Game:
         
         # тень
         self.shadowImage = pygame.transform.scale(pygame.image.load("source/texture/unit/shadow.png"), (self.plates_size[0] - 1, self.plates_size[1] - 1))
+        
+        # интерфейс
+        """AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        какого хера шрифт не инициализируется 
+        """
+        """self.mMenue = Menue(((self.sideShift + self.size[0] * self.plates_size[0], 0),
+                             (self.sideShift, self.winSize[1])))"""
+        """self.mMenue = Menue(((0, 0), (0, 0)))
+        self.mMenue.addButton(Button(((0, 0), (100, 100)), "RUN"))"""
+        """self.nextpl_bt = Button(((0, 0), (100, 100)), "RUN")
+        ((self.sideShift + self.size[0] * self.plates_size[0], self.winSize[1] - self.plates_size[1]), (200, 100))"""
+        
 
 
     def generateMap(self):
@@ -214,16 +227,14 @@ class Game:
 
     def renderInterface(self, screen):
         # группа
-        group = pygame.sprite.Group()
         screen.fill((255, 255, 255))
         
         self.renderCellInfo(screen)
         self.renderUnitInfo(screen)
         self.renderBuildingInfo(screen)
         self.renderPlayerInfo(screen)
-
-        # отрисовка
-        group.draw(screen)
+        
+        self.mMenue.render(screen)
         
     def renderCellInfo(self, screen):
         # информация о клетке

@@ -14,8 +14,9 @@ class Button:
         self.imagePress = pygame.transform.scale(pygame.image.load("source/interface/TestButtonPress.png"), self.rect[1])
         self.imageSelect = pygame.transform.scale(pygame.image.load("source/interface/TestButtonSelect.png"), self.rect[1])
         
-        self.text = pygame.font.Font(None, 30).render(text, False, (0, 0, 0))
-        self.textShift = (self.rect[1][0] / 4, self.rect[1][1] / 2)
+        self.font = pygame.font.Font("source/font/19925.ttf", 30)
+        self.text = self.font.render(text, False, (0, 0, 0))
+        self.textShift = (self.rect[1][0] / 4, self.rect[1][1] / 2.2)
 
     ''' проверяет коллизию кнопки '''
     def collide(self, pos):
